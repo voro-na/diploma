@@ -1,6 +1,7 @@
-import { LibraryPage } from '@/components/components.pages/LibraryPage'
-import { getLibraryPageServerSideProps } from '@/components/components.pages/LibraryPage/LibraryPageServerSideProps'
+import { FC } from 'react'
 
-export const getServerSideProps = getLibraryPageServerSideProps
+const MainPage: FC = () => {
+    return <div>Main</div>
+}
 
-export default LibraryPage
+export default MainPage
