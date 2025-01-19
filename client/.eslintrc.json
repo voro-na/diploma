@@ -4,7 +4,7 @@
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking"
     ],
-    "plugins": ["unused-imports", "@typescript-eslint"],
+    "plugins": ["unused-imports", "@typescript-eslint", "simple-import-sort"],
     "rules": {
         "unused-imports/no-unused-imports": "error",
         "unused-imports/no-unused-vars": [
@@ -14,6 +14,21 @@
                 "varsIgnorePattern": "^_",
                 "args": "after-used",
                 "argsIgnorePattern": "^_"
+            }
+        ],
+        "simple-import-sort/imports": [
+            "error",
+            {
+                "groups": [
+                    ["^node:"],
+                    ["^\\u0000"],
+                    ["^react", "^@?\\w"],
+                    ["@mui"],
+                    ["@/features"],
+                    ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
+                    ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
+                    ["^.+\\.s?css$"]
+                ]
             }
         ]
     },
