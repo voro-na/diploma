@@ -1,15 +1,20 @@
-import type { AppProps } from 'next/app'
+import type { AppProps } from 'next/app';
 
-import { AppCacheProvider } from '@mui/material-nextjs/v13-pagesRouter'
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { AppCacheProvider } from '@mui/material-nextjs/v13-pagesRouter';
 
-import './global.css'
+import './global.css';
+
+const theme = createTheme({ cssVariables: true });
 
 export default function App({ Component, pageProps }: AppProps) {
     return (
         <>
-            <AppCacheProvider {...pageProps}>
-                <Component {...pageProps} />
-            </AppCacheProvider>
+            <ThemeProvider theme={theme}>
+                <AppCacheProvider {...pageProps}>
+                    <Component {...pageProps} />
+                </AppCacheProvider>
+            </ThemeProvider>
         </>
-    )
+    );
 }
