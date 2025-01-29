@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import AdbIcon from '@mui/icons-material/Adb';
 import { FC } from 'react';
+import { ThemeToggler } from '@/shared/theme/ui';
 
 export const Header: FC = () => {
     return (
@@ -28,6 +29,7 @@ export const Header: FC = () => {
                     >
                         LOGO
                     </Typography>
+                    <ThemeToggler />
                 </Toolbar>
             </Container>
         </AppBar>
