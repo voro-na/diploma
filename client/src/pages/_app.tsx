@@ -1,27 +1,23 @@
+import { observer } from 'mobx-react-lite';
 import type { AppProps } from 'next/app';
 
-import {
-    createTheme,
-    ThemeProvider as MuiThemeProvider,
-} from '@mui/material/styles';
+import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import { AppCacheProvider } from '@mui/material-nextjs/v13-pagesRouter';
 
 import './global.css';
-import { ThemeProvider, useTheme } from '@/shared/theme/model';
-import { lightTheme } from '@/shared/theme';
 
-const theme = createTheme({ cssVariables: true });
+import { themeStore } from '@/shared/theme';
 
-export default function App({ Component, pageProps }: AppProps) {
+const App = observer(({ Component, pageProps }: AppProps) => {
     return (
         <>
-            <ThemeProvider>
-                <MuiThemeProvider theme={lightTheme}>
+            <MuiThemeProvider theme={themeStore.theme}>
                 <AppCacheProvider {...pageProps}>
                     <Component {...pageProps} />
                 </AppCacheProvider>
-                </MuiThemeProvider>
-            </ThemeProvider>
+            </MuiThemeProvider>
         </>
     );
-}
+});
+
+export default App;

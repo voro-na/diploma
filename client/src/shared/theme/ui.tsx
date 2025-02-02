@@ -1,13 +1,16 @@
-import IconButton from '@mui/material/IconButton';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
+import { FC } from 'react';
 
-import { FC, useContext } from 'react';
-import { useTheme } from './model';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import IconButton from '@mui/material/IconButton';
+
+import { themeStore } from './store';
 
 export const ThemeToggler: FC = () => {
-    const { onToggle } = useTheme();
     return (
-        <IconButton aria-label='delete' onClick={onToggle}>
+        <IconButton
+            aria-label='delete'
+            onClick={() => themeStore.toggleTheme()}
+        >
             <DarkModeIcon />
         </IconButton>
     );
