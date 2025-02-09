@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { alpha, styled } from '@mui/material';
+import { styled } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Container from '@mui/material/Container';
 import Toolbar from '@mui/material/Toolbar';
@@ -15,7 +15,7 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
     backdropFilter: 'blur(24px)',
     border: '1px solid',
     borderColor: theme.palette.divider,
-    backgroundColor: alpha(theme.palette.background.default, 0.4),
+    backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[1],
     padding: '8px 12px',
 }));

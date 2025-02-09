@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import type { AppProps } from 'next/app';
 
+import { CssBaseline } from '@mui/material';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import { AppCacheProvider } from '@mui/material-nextjs/v13-pagesRouter';
 
@@ -13,6 +14,7 @@ const App = observer(({ Component, pageProps }: AppProps) => {
         <>
             <MuiThemeProvider theme={theme}>
                 <AppCacheProvider {...pageProps}>
+                    <CssBaseline />
                     <Component {...pageProps} />
                 </AppCacheProvider>
             </MuiThemeProvider>

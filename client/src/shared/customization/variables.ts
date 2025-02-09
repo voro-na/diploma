@@ -100,8 +100,8 @@ export const colorSchemes = {
             },
             divider: alpha(gray[300], 0.4),
             background: {
-                default: 'hsl(0, 0%, 99%)',
-                paper: 'hsl(220, 35%, 97%)',
+                default: gray[50],
+                paper: 'hsl(0, 0%, 100%)',
             },
             text: {
                 primary: gray[800],

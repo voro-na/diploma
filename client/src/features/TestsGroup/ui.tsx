@@ -1,5 +1,7 @@
 import { FC } from 'react';
 
+import { Card } from '@mui/material';
+
 export const TestsGroup: FC = () => {
-    return <>Tests Group</>;
+    return <Card variant='outlined'>Tests Group</Card>;
 };
