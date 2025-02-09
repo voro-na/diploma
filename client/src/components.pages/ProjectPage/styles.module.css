@@ -2,5 +2,4 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     min-height: 100vh;
-    background-color: var(--mui-palette-grey-50);
 }

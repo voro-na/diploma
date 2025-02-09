@@ -1,15 +1,16 @@
 import { createTheme } from '@mui/material/styles';
 
-export const lightTheme = createTheme({
+import { colorSchemes, inputsCustomizations } from '../customization';
+
+export const theme = createTheme({
     palette: {
         mode: 'light',
     },
-    cssVariables: true,
-});
-
-export const darkTheme = createTheme({
-    palette: {
-        mode: 'dark',
+    cssVariables: {
+        colorSchemeSelector: 'class',
     },
-    cssVariables: true,
+    colorSchemes,
+    components: {
+        ...inputsCustomizations,
+    },
 });

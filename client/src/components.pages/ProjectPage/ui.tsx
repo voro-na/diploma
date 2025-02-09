@@ -4,9 +4,9 @@ import { Box, Container } from '@mui/material';
 
 import { NestedList } from '@/features/NestedFolders';
 import { TestsGroup } from '@/features/TestsGroup';
+import { PageLayout } from '@/widgets/Layout';
 
 import styles from './styles.module.css';
-import { PageLayout } from '@/widgets/Layout';
 
 export const ProjectPage: FC = () => {
     return (

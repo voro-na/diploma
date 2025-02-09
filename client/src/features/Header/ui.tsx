@@ -1,36 +1,52 @@
+import { FC } from 'react';
+
+import { alpha, styled } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
+import Container from '@mui/material/Container';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import AdbIcon from '@mui/icons-material/Adb';
-import { FC } from 'react';
-import { ThemeToggler } from '@/shared/theme/ui';
+
+import { ThemeToggler } from '@/shared/theme';
+
+const StyledToolbar = styled(Toolbar)(({ theme }) => ({
+    display: 'flex',
+    justifyContent: 'space-between',
+    borderRadius: `calc(${theme.shape.borderRadius}px + 8px)`,
+    backdropFilter: 'blur(24px)',
+    border: '1px solid',
+    borderColor: theme.palette.divider,
+    backgroundColor: alpha(theme.palette.background.default, 0.4),
+    boxShadow: theme.shadows[1],
+    padding: '8px 12px',
+}));
 
 export const Header: FC = () => {
     return (
-        <AppBar position='static'>
+        <AppBar
+            position='static'
+            sx={{
+                boxShadow: 0,
+                bgcolor: 'transparent',
+                mt: '20px',
+                backgroundImage: 'none',
+            }}
+        >
             <Container maxWidth='xl'>
-                <Toolbar disableGutters>
-                    <AdbIcon sx={{ display: 'flex', mr: 1 }} />
+                <StyledToolbar>
                     <Typography
                         variant='h6'
-                        noWrap
-                        component='a'
-                        href='#app-bar-with-responsive-menu'
                         sx={{
-                            mr: 2,
                             fontFamily: 'monospace',
                             display: 'flex',
                             fontWeight: 700,
-                            letterSpacing: '.3rem',
-                            color: 'inherit',
-                            textDecoration: 'none',
+                            letterSpacing: '4px',
+                            color: 'var(--mui-palette-info-dark)',
                         }}
                     >
                         LOGO
                     </Typography>
                     <ThemeToggler />
-                </Toolbar>
+                </StyledToolbar>
             </Container>
         </AppBar>
     );

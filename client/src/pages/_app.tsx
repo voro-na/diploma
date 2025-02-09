@@ -4,14 +4,14 @@ import type { AppProps } from 'next/app';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import { AppCacheProvider } from '@mui/material-nextjs/v13-pagesRouter';
 
-import './global.css';
+import { theme } from '@/shared/theme';
 
-import { themeStore } from '@/shared/theme';
+import './global.css';
 
 const App = observer(({ Component, pageProps }: AppProps) => {
     return (
         <>
-            <MuiThemeProvider theme={themeStore.theme}>
+            <MuiThemeProvider theme={theme}>
                 <AppCacheProvider {...pageProps}>
                     <Component {...pageProps} />
                 </AppCacheProvider>
