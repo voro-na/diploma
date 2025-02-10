@@ -1,8 +1,8 @@
 import { FC } from 'react';
 
-import { Container } from '@mui/material';
+import { Card, Container } from '@mui/material';
 
-import { NestedList } from '@/features/NestedFolders';
+import { FirstComponent } from '@/features/ProjectTree';
 import { TestsGroup } from '@/features/TestsGroup';
 import { PageLayout } from '@/widgets/Layout';
 
@@ -16,7 +16,9 @@ export const ProjectPage: FC = () => {
                 component='section'
                 maxWidth='xl'
             >
-                <NestedList />
+                <Card variant='outlined'>
+                    <FirstComponent />
+                </Card>
                 <TestsGroup />
             </Container>
         </PageLayout>
