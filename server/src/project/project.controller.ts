@@ -17,8 +17,8 @@ export class ProjectsController {
     return this.projectsService.findProjectById(id);
   }
 
-  @Get('/name/:name')
-  async findByName(@Param('name') name: string): Promise<Project> {
-    return this.projectsService.findProject(name);
+  @Get('/slug/:slug')
+  async findBySlug(@Param('slug') slug: string): Promise<Project> {
+    return this.projectsService.findProject(slug);
   }
 }

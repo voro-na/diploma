@@ -6,7 +6,7 @@ export type ProjectDocument = HydratedDocument<Project>;
 @Schema()
 export class Features {
   @Prop({ required: true })
-  id: string;
+  slug: string;
 
   @Prop({ required: true })
   name: string;
@@ -18,7 +18,7 @@ export class Features {
 @Schema()
 export class Group {
   @Prop({ required: true })
-  id: string;
+  slug: string;
 
   @Prop({ required: true })
   name: string;
@@ -33,7 +33,7 @@ export class Group {
 @Schema()
 export class Project {
   @Prop({ required: true })
-  id: string;
+  slug: string;
 
   @Prop({ required: true })
   name: string;

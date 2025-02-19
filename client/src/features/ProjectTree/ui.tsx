@@ -7,6 +7,8 @@ import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
 
 import { DotIcon } from '@/shared/ui/icons';
 
+import { useGetProjectByNameQuery } from '@/entities/project/api';
+
 const CustomTreeItem = styled(TreeItem)(({ theme }) => ({
     [`& .${treeItemClasses.content}`]: {
         padding: theme.spacing(0.5, 1),
@@ -50,11 +52,14 @@ const ITEMS: TreeViewBaseItem[] = [
 ];
 
 export const ProjectTree: FC = () => {
+    const { data, error, isLoading } = useGetProjectByNameQuery('project-1');
+
+    // console.log(data, error, isLoading);
+
     return (
         <>
             <RichTreeView
                 items={ITEMS}
-                onItemClick={(item, id) => console.log(item, id)}
                 slots={{
                     endIcon: DotIcon,
                     item: CustomTreeItem,

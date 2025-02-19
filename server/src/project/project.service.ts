@@ -32,11 +32,11 @@ export class ProjectService {
     return project;
   }
 
-  async findProject(name: string): Promise<Project> {
-    const project = await this.projectModel.findOne({ name }).exec();
+  async findProject(slug: string): Promise<Project> {
+    const project = await this.projectModel.findOne({ slug }).exec();
 
     if (!project) {
-      throw new NotFoundException(`Project with name ${name} not found`);
+      throw new NotFoundException(`Project with slug ${slug} not found`);
     }
     return project;
   }
