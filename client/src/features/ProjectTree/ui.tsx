@@ -1,21 +1,11 @@
 import { FC } from 'react';
 
-import { alpha, Box, styled, useTheme } from '@mui/material';
+import { alpha, styled } from '@mui/material';
 import { TreeViewBaseItem } from '@mui/x-tree-view/models';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
 
-const DotIcon: FC = () => {
-    const theme = useTheme();
-
-    return (
-        <Box sx={{ marginRight: 1, display: 'flex', alignItems: 'center' }}>
-            <svg width={6} height={6}>
-                <circle cx={3} cy={3} r={3} fill={theme.palette.primary.main} />
-            </svg>
-        </Box>
-    );
-};
+import { DotIcon } from '@/shared/ui/icons';
 
 const CustomTreeItem = styled(TreeItem)(({ theme }) => ({
     [`& .${treeItemClasses.content}`]: {
@@ -59,11 +49,12 @@ const ITEMS: TreeViewBaseItem[] = [
     },
 ];
 
-export const FirstComponent: FC = () => {
+export const ProjectTree: FC = () => {
     return (
         <>
             <RichTreeView
                 items={ITEMS}
+                onItemClick={(item, id) => console.log(item, id)}
                 slots={{
                     endIcon: DotIcon,
                     item: CustomTreeItem,

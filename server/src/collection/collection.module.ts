@@ -17,19 +17,19 @@ import { jwtConstants } from 'src/auth/jwt.config';
     ]),
     MongooseModule.forFeature([{ name: Card.name, schema: CardSchema }]),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    JwtModule.register({
-      global: true,
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '10000s' },
-    })
+    // JwtModule.register({
+    //   global: true,
+    //   secret: jwtConstants.secret,
+    //   signOptions: { expiresIn: '10000s' },
+    // })
   ],
   controllers: [CollectionController],
   providers: [
     CollectionService,
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    }
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AuthGuard,
+    // }
   ],
 })
-export class CollectionModule { }
+export class CollectionModule {}

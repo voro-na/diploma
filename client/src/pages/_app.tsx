@@ -1,4 +1,3 @@
-import { observer } from 'mobx-react-lite';
 import type { AppProps } from 'next/app';
 
 import { CssBaseline } from '@mui/material';
@@ -9,7 +8,7 @@ import { theme } from '@/shared/theme';
 
 import './global.css';
 
-const App = observer(({ Component, pageProps }: AppProps) => {
+const App = ({ Component, pageProps }: AppProps) => {
     return (
         <>
             <MuiThemeProvider theme={theme}>
@@ -20,6 +19,6 @@ const App = observer(({ Component, pageProps }: AppProps) => {
             </MuiThemeProvider>
         </>
     );
-});
+};
 
 export default App;

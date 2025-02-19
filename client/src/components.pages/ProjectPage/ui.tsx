@@ -2,7 +2,7 @@ import { FC } from 'react';
 
 import { Card, Container } from '@mui/material';
 
-import { FirstComponent } from '@/features/ProjectTree';
+import { ProjectTree } from '@/features/ProjectTree';
 import { TestsGroup } from '@/features/TestsGroup';
 import { PageLayout } from '@/widgets/Layout';
 
@@ -17,7 +17,7 @@ export const ProjectPage: FC = () => {
                 maxWidth='xl'
             >
                 <Card variant='outlined'>
-                    <FirstComponent />
+                    <ProjectTree />
                 </Card>
                 <TestsGroup />
             </Container>

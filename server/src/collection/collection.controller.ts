@@ -8,7 +8,7 @@ import {
   Post,
   Put,
   Query,
-  Request
+  Request,
 } from '@nestjs/common';
 import { CollectionService } from './collection.service';
 import {
@@ -19,12 +19,10 @@ import { ObjectId } from 'mongoose';
 
 @Controller('/collections')
 export class CollectionController {
-  constructor(private collectionService: CollectionService) { }
+  constructor(private collectionService: CollectionService) {}
 
   @Post()
-  create(
-    @Body() dto: CreateCollectionDto,
-    @Request() req) {
+  create(@Body() dto: CreateCollectionDto, @Request() req) {
     const userId = req.user.sub;
     return this.collectionService.create(dto, userId);
   }
@@ -33,11 +31,15 @@ export class CollectionController {
   async editCollection(
     @Param('collectionId') collectionId: ObjectId,
     @Body() updateDto: CreateCollectionDto,
-    @Request() req
+    @Request() req,
   ) {
     const userId = req.user.sub;
     try {
-      return this.collectionService.editCollection(collectionId, updateDto, userId);
+      return this.collectionService.editCollection(
+        collectionId,
+        updateDto,
+        userId,
+      );
     } catch (error) {
       throw error;
     }
@@ -47,7 +49,7 @@ export class CollectionController {
   createCard(
     @Body() dto: CreateCardDto,
     @Param('collectionId') collectionId: ObjectId,
-    @Request() req
+    @Request() req,
   ) {
     return this.collectionService.addCard(dto, collectionId);
   }
@@ -58,7 +60,11 @@ export class CollectionController {
   }
 
   @Get()
-  getAll(@Query('count') count: number, @Query('offset') offset: number, @Request() req) {
+  getAll(
+    @Query('count') count: number,
+    @Query('offset') offset: number,
+    @Request() req,
+  ) {
     const userId = req.user.sub;
     return this.collectionService.getAll(count, offset, userId);
   }
@@ -79,7 +85,7 @@ export class CollectionController {
   deleteCard(
     @Param('collectionId') collectionId: ObjectId,
     @Param('cardId') cardId: ObjectId,
-    @Request() req
+    @Request() req,
   ) {
     try {
       return this.collectionService.deleteCard(collectionId, cardId);

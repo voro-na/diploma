@@ -4,16 +4,20 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CorsModule } from './middleware/cors.middleware';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { ConfigModule } from '@nestjs/config';
+import { ProjectModule } from './project/project.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(
-      'mongodb+srv://voropaevaanadya:YFLZ11ktyz8@cluster0.eltmkit.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
-    ),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    MongooseModule.forRoot(process.env.MONGODB_URI),
     CollectionModule,
     CorsModule,
-    AuthModule,
+    // AuthModule,
     UsersModule,
+    ProjectModule,
   ],
 })
 export class AppModule {}
