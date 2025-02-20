@@ -1,13 +1,15 @@
 import { FC } from 'react';
+import { useRouter } from 'next/router';
 
-import { alpha, styled } from '@mui/material';
-import { TreeViewBaseItem } from '@mui/x-tree-view/models';
+import { Alert, alpha, Skeleton, styled } from '@mui/material';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
 
 import { DotIcon } from '@/shared/ui/icons';
 
-import { useGetProjectByNameQuery } from '@/entities/project/api';
+import { mapDataToTreeItems } from './helpers';
+
+import { useGetProjectBySlugQuery } from '@/entities/project/api';
 
 const CustomTreeItem = styled(TreeItem)(({ theme }) => ({
     [`& .${treeItemClasses.content}`]: {
@@ -21,50 +23,37 @@ const CustomTreeItem = styled(TreeItem)(({ theme }) => ({
     },
 }));
 
-const ITEMS: TreeViewBaseItem[] = [
-    {
-        id: 'grid',
-        label: 'Data Grid',
-        children: [
-            { id: 'grid-community', label: '@mui/x-data-grid' },
-            { id: 'grid-pro', label: '@mui/x-data-grid-pro' },
-            { id: 'grid-premium', label: '@mui/x-data-grid-premium' },
-        ],
-    },
-    {
-        id: 'pickers',
-        label: 'Date and Time Pickers',
-        children: [
-            { id: 'pickers-community', label: '@mui/x-date-pickers' },
-            { id: 'pickers-pro', label: '@mui/x-date-pickers-pro' },
-        ],
-    },
-    {
-        id: 'charts',
-        label: 'Charts',
-        children: [{ id: 'charts-community', label: '@mui/x-charts' }],
-    },
-    {
-        id: 'tree-view',
-        label: 'Tree View',
-        children: [{ id: 'tree-view-community', label: '@mui/x-tree-view' }],
-    },
-];
-
 export const ProjectTree: FC = () => {
-    const { data, error, isLoading } = useGetProjectByNameQuery('project-1');
-
-    // console.log(data, error, isLoading);
+    const router = useRouter();
+    const projectId = router.query.projectId as string;
+    const { data, error, isLoading } = useGetProjectBySlugQuery(projectId);
 
     return (
         <>
-            <RichTreeView
-                items={ITEMS}
-                slots={{
-                    endIcon: DotIcon,
-                    item: CustomTreeItem,
-                }}
-            />
+            {isLoading && (
+                <>
+                    <Skeleton height={70} />
+                    <Skeleton height={70} />
+                    <Skeleton height={70} />
+                </>
+            )}
+            {error && (
+                <Alert severity='error'>
+                    {
+                        // eslint-disable-next-line
+                        error?.data?.message || 'Some error occurred'
+                    }
+                </Alert>
+            )}
+            {data && (
+                <RichTreeView
+                    items={mapDataToTreeItems(data)}
+                    slots={{
+                        endIcon: DotIcon,
+                        item: CustomTreeItem,
+                    }}
+                />
+            )}
         </>
     );
 };

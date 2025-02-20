@@ -1,4 +1,4 @@
-import { Provider } from 'react-redux'
+import {Provider} from 'react-redux';
 import type { AppProps } from 'next/app';
 
 import { CssBaseline } from '@mui/material';
@@ -9,16 +9,18 @@ import { theme } from '@/shared/theme';
 
 import './global.css';
 
-import { store } from '@/app/store';
+import { wrapper } from '@/app/store';
 
-const App = ({ Component, pageProps }: AppProps) => {
+const App = ({ Component, pageProps, ...rest }: AppProps) => {
+    const { store, props } = wrapper.useWrappedStore(rest);
+
     return (
         <>
             <Provider store={store}>
                 <MuiThemeProvider theme={theme}>
                     <AppCacheProvider {...pageProps}>
                         <CssBaseline />
-                        <Component {...pageProps} />
+                        <Component {...props.pageProps} />
                     </AppCacheProvider>
                 </MuiThemeProvider>
             </Provider>
