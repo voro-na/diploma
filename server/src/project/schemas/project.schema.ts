@@ -13,6 +13,12 @@ export class Features {
 
   @Prop()
   description?: string;
+
+  @Prop()
+  allTestCount: number;
+
+  @Prop()
+  passTestCount: number;
 }
 
 @Schema()

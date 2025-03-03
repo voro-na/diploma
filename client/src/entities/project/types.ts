@@ -19,4 +19,6 @@ export interface IFeature {
     slug: string;
     name: string;
     description?: string | null;
+    allTestCount?: number;
+    passTestCount?: number;
 }

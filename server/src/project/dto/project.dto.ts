@@ -18,7 +18,7 @@ class CreateGroupDto {
 
   @ValidateNested({ each: true })
   @Type(() => CreateSubgroupDto)
-  subgroups: CreateSubgroupDto[];
+  features: CreateSubgroupDto[];
 }
 
 export class CreateProjectDto {
