@@ -2,6 +2,7 @@ import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { Project } from './schemas/project.schema';
 import { CreateProjectDto } from './dto/project.dto';
+import { CreateTestGroupDto } from './dto/tests.dto';
 
 @Controller('projects')
 export class ProjectsController {
@@ -20,5 +21,29 @@ export class ProjectsController {
   @Get('/slug/:slug')
   async findBySlug(@Param('slug') slug: string): Promise<Project> {
     return this.projectsService.findProject(slug);
+  }
+
+  @Get(':projectSlug/groups/:groupSlug/features/:featureSlug')
+  async getTestGroups(
+    @Param('projectSlug') projectSlug: string,
+    @Param('groupSlug') groupSlug: string,
+    @Param('featureSlug') featureSlug: string,
+  ) {
+    return this.projectsService.findTests(projectSlug, groupSlug, featureSlug);
+  }
+
+  @Post(':projectSlug/groups/:groupSlug/features/:featureSlug')
+  async addTests(
+    @Param('projectSlug') projectSlug: string,
+    @Param('groupSlug') groupSlug: string,
+    @Param('featureSlug') featureSlug: string,
+    @Body() createTestsDto: CreateTestGroupDto[],
+  ) {
+    return this.projectsService.addTests(
+      projectSlug,
+      groupSlug,
+      featureSlug,
+      createTestsDto,
+    );
   }
 }

@@ -22,3 +22,23 @@ export interface IFeature {
     allTestCount?: number;
     passTestCount?: number;
 }
+
+const enum Status {
+    PASS = 'PASS',
+    FAIL = 'FAIL',
+    SKIP = 'SKIP',
+}
+
+export interface ITest {
+    _id: string;
+    name: string;
+    description?: string;
+    link?: string;
+    status: Status;
+}
+
+export interface ITestGroup {
+    _id: string;
+    name: string;
+    tests: ITest[];
+}

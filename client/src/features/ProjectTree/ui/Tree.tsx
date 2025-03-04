@@ -1,21 +1,43 @@
 import { FC } from 'react';
 import { useRouter } from 'next/router';
+import Router from 'next/router';
+import { ParsedUrlQuery } from 'querystring';
 
 import { Alert, Skeleton } from '@mui/material';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 
+import {
+    useGetProjectBySlugQuery,
+    useGetTestsDetailsQuery,
+} from '@/entities/project/api';
 import { DotIcon } from '@/shared/ui/icons';
 
 import { mapDataToTreeItems } from '../helpers';
 
 import { TreeItem } from './CustomTreeItem';
 
-import { useGetProjectBySlugQuery } from '@/entities/project/api';
-
 export const ProjectTree: FC = () => {
     const router = useRouter();
     const projectId = router.query.projectId as string;
     const { data, error, isLoading } = useGetProjectBySlugQuery(projectId);
+
+    const updatePath = (query: ParsedUrlQuery) => {
+        const joinedQuery = { ...router.query, ...query };
+
+        void Router.push({ query: joinedQuery }, undefined, {
+            shallow: true,
+        }).catch();
+    };
+
+    const onItemClick = (id: string) => {
+        const isGroup = data?.groups.find((group) => group.slug === id);
+
+        if (isGroup) {
+            updatePath({ group: id });
+            return;
+        }
+        updatePath({ feature: id });
+    };
 
     return (
         <>
@@ -37,6 +59,7 @@ export const ProjectTree: FC = () => {
             {data && (
                 <RichTreeView
                     items={mapDataToTreeItems(data)}
+                    onItemClick={(_, id) => onItemClick(id)}
                     slots={{
                         endIcon: DotIcon,
                         item: TreeItem,

@@ -1,11 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
+import { TestGroup } from './tests.schema';
 
 export type ProjectDocument = HydratedDocument<Project>;
 
 @Schema()
-export class Features {
-  @Prop({ required: true })
+export class Feature {
+  @Prop({ required: true, unique: true })
   slug: string;
 
   @Prop({ required: true })
@@ -19,11 +20,14 @@ export class Features {
 
   @Prop()
   passTestCount: number;
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'TestGroup' }], default: [] })
+  testGroup: Types.ObjectId[];
 }
 
 @Schema()
 export class Group {
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   slug: string;
 
   @Prop({ required: true })
@@ -32,13 +36,13 @@ export class Group {
   @Prop()
   description?: string;
 
-  @Prop({ type: [Features], default: [] })
-  features: Features[];
+  @Prop({ type: [Feature], default: [] })
+  features: Feature[];
 }
 
 @Schema()
 export class Project {
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   slug: string;
 
   @Prop({ required: true })
@@ -53,4 +57,4 @@ export class Project {
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);
 export const GroupSchema = SchemaFactory.createForClass(Group);
-export const FeaturesSchema = SchemaFactory.createForClass(Features);
+export const FeaturesSchema = SchemaFactory.createForClass(Feature);
