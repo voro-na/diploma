@@ -5,12 +5,16 @@ import { Card, Stack, Typography } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 
 import { PieChartWithCenterLabel } from '@/features/PieChart';
-import { useGetTestsDetailsQuery } from '@/entities/project';
+import { ITestGroup, useGetTestsDetailsQuery } from '@/entities/project';
+import { Status } from '@/entities/project';
 
-const rows = [
-    { id: 1, username: '@MUI' },
-    { id: 2, username: '@MUI-X' },
-];
+import styles from './styles.module.css';
+
+interface ITestRowData {
+    status?: Status;
+    test: string;
+    id: string;
+}
 
 export const TestsGroup: FC = () => {
     const router = useRouter();
@@ -28,7 +32,27 @@ export const TestsGroup: FC = () => {
         return;
     }
 
-    const { info } = featureData;
+    const { info, tests } = featureData;
+
+    const getRowsData = (tests: ITestGroup[]) => {
+        return tests.reduce((acc: ITestRowData[], testGroup) => {
+            acc.push({
+                status: undefined,
+                test: testGroup.name,
+                id: testGroup._id,
+            });
+
+            testGroup.tests.forEach((test) => {
+                acc.push({
+                    status: test.status,
+                    test: test.name,
+                    id: test.name + testGroup._id,
+                });
+            });
+
+            return acc;
+        }, []);
+    };
 
     return (
         <Card variant='outlined'>
@@ -52,6 +76,7 @@ export const TestsGroup: FC = () => {
                         variant='subtitle2'
                         sx={{ marginBottom: 2 }}
                         gutterBottom
+                        color='textSecondary'
                     >
                         {info.description}
                     </Typography>
@@ -64,28 +89,46 @@ export const TestsGroup: FC = () => {
 
             <DataGrid
                 hideFooter
+                getRowClassName={(params) =>
+                    !params.row.status ? styles['group'] : ''
+                }
                 columns={[
-                    {
-                        field: 'status',
-                        headerName: 'Статус',
-                        sortable: false,
-                        filterable: false,
-                        hideable: false,
-                        groupable: false,
-                        disableColumnMenu: true,
-                    },
                     {
                         field: 'test',
                         headerName: 'Название теста',
+                        headerClassName: styles['header'],
                         sortable: false,
                         filterable: false,
                         hideable: false,
                         groupable: false,
                         disableColumnMenu: true,
                         flex: 1,
+                        colSpan: (_, row) => {
+                            if (!row.status) {
+                                return 2;
+                            }
+
+                            return undefined;
+                        },
+                        valueGetter: (value, row) => {
+                            if (!row.status) {
+                                return row.test;
+                            }
+                            return value;
+                        },
+                    },
+                    {
+                        field: 'status',
+                        headerName: 'Статус',
+                        headerClassName: styles['header'],
+                        sortable: false,
+                        filterable: false,
+                        hideable: false,
+                        groupable: false,
+                        disableColumnMenu: true,
                     },
                 ]}
-                rows={rows}
+                rows={getRowsData(tests)}
             />
         </Card>
     );

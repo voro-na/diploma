@@ -1,0 +1,7 @@
+.group{
+    background-color: var(--mui-palette-background-default);
+}
+
+.header{
+    background-color: var(--mui-palette-info-light);
+}

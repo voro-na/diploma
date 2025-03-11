@@ -1,5 +1,6 @@
-body {
+html, body, .root, #__next{
+    box-sizing: border-box;
+    height: 100%;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }

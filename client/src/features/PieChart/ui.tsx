@@ -22,7 +22,7 @@ const PieCenterLabel: FC<PropsWithChildren> = ({ children }) => {
     const { width, height, left, top } = useDrawingArea();
 
     const primaryY = top + height / 2 - 10;
-    const secondaryY = primaryY + 24;
+    const secondaryY = primaryY + 20;
 
     return (
         <>

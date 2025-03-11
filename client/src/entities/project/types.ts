@@ -23,7 +23,7 @@ export interface IFeature {
     passTestCount?: number;
 }
 
-const enum Status {
+export const enum Status {
     PASS = 'PASS',
     FAIL = 'FAIL',
     SKIP = 'SKIP',
