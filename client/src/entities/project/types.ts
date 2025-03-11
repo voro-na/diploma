@@ -42,3 +42,8 @@ export interface ITestGroup {
     name: string;
     tests: ITest[];
 }
+
+export interface ITestsDetailsResponse {
+    info: IFeature;
+    tests: ITestGroup[];
+}

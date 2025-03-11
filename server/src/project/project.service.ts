@@ -83,7 +83,7 @@ export class ProjectService {
     projectSlug: string,
     groupSlug: string,
     featureSlug: string,
-  ): Promise<TestGroup[]> {
+  ): Promise<{ info: Feature; tests: TestGroup[] }> {
     const project = await this.projectModel.findOne({ slug: projectSlug });
 
     if (!project) {
@@ -103,6 +103,6 @@ export class ProjectService {
       _id: { $in: feature.testGroup },
     });
 
-    return testGroups;
+    return { info: feature, tests: testGroups };
   }
 }

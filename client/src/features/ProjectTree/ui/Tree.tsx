@@ -8,7 +8,6 @@ import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 
 import {
     useGetProjectBySlugQuery,
-    useGetTestsDetailsQuery,
 } from '@/entities/project/api';
 import { DotIcon } from '@/shared/ui/icons';
 

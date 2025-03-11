@@ -3,7 +3,7 @@ import { FC } from 'react';
 import { Card, Container } from '@mui/material';
 
 import { ProjectTree } from '@/features/ProjectTree';
-import { TestsGroup } from '@/features/TestsGroup';
+import { TestsGroup } from '@/widgets/TestsGroup';
 import { PageLayout } from '@/widgets/Layout';
 
 import styles from './styles.module.css';

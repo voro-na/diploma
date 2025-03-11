@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-import { IProject, ITestGroup } from './types';
+import { IProject, ITestsDetailsResponse } from './types';
 
 export const projectApi = createApi({
     reducerPath: 'projectApi',
@@ -12,7 +12,7 @@ export const projectApi = createApi({
             query: (slug) => `projects/slug/${slug}`,
         }),
 
-        getTestsDetails: builder.query<ITestGroup[],{ projectSlug: string; groupSlug: string; featureSlug: string }>({
+        getTestsDetails: builder.query<ITestsDetailsResponse,{ projectSlug: string; groupSlug: string; featureSlug: string }>({
             query: ({ projectSlug, groupSlug, featureSlug }) =>
                 `projects/${projectSlug}/groups/${groupSlug}/features/${featureSlug}`,
         }),
