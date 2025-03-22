@@ -47,7 +47,6 @@ export class JestCoverageChecker {
             throw new Error('Either jestResults or jestResultsPath must be provided');
         }
 
-        // Load test configuration
         if (this.options.config) {
             config = this.options.config;
         } else if (this.options.configPath) {

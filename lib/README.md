@@ -65,14 +65,12 @@ The test configuration file is a JSON file that defines the tests that should be
   "tests": [
     {
       "id": "test1",
-      "name": "should add two numbers correctly",
-      "path": "src/math.test.js",
+      "name": "Math should add two numbers correctly",
       "description": "Tests the add function"
     },
     {
       "id": "test2",
-      "name": "should subtract two numbers correctly",
-      "path": "src/math.test.js",
+      "name": "Math should subtract two numbers correctly",
       "description": "Tests the subtract function"
     }
   ]

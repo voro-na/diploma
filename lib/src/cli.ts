@@ -1,7 +1,4 @@
 #!/usr/bin/env node
-
-import * as fs from 'fs';
-import * as path from 'path';
 import { JestCoverageChecker } from './index';
 
 // Parse command line arguments
@@ -15,7 +12,7 @@ let sendResults = false;
 // Process arguments
 for (let i = 0; i < args.length; i++) {
   const arg = args[i];
-  
+
   if (arg === '--results' || arg === '-r') {
     jestResultsPath = args[++i];
   } else if (arg === '--config' || arg === '-c') {
@@ -82,26 +79,26 @@ async function run() {
       jestResultsPath,
       configPath,
     });
-    
+
     // Fetch config from API if requested
     if (fetchConfig && apiUrl) {
       const config = await checker.fetchConfigFromApi(apiUrl);
       console.log('Fetched config from API');
     }
-    
+
     // Run the coverage check
     const results = await checker.run();
-    
+
     // Send results to API if requested
     if (sendResults && apiUrl) {
       await checker.sendResultsToApi(results, apiUrl);
       console.log('Sent results to API');
     }
-    
+
     // Exit with appropriate code based on test results
     const hasFailedTests = results.some(r => r.status === 'failed');
     const hasNotFoundTests = results.some(r => r.status === 'not found');
-    
+
     if (hasFailedTests) {
       process.exit(1); // Exit with error if any tests failed
     } else if (hasNotFoundTests) {

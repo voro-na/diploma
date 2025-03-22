@@ -1,5 +1,4 @@
 import * as fs from 'fs';
-import * as path from 'path';
 import { JestTestResult, TestConfig, TestResultWithConfig } from './types';
 
 /**
@@ -62,7 +61,6 @@ export function matchTestsWithConfig(
       id: testConfig.id,
       name: testConfig.name,
       status: testResult ? testResult.status : 'not found',
-      path: testConfig.path,
       description: testConfig.description,
     };
   });
@@ -83,10 +81,9 @@ export function printResults(results: TestResultWithConfig[]): void {
     
     const resetColor = '\x1b[0m';
     
-    // Format: Test name from config + exists in results? + pass/fail status
     const existsInResults = result.status !== 'not found';
     const existsText = existsInResults ? 'Found in test results' : 'Not found in test results';
-    const existsColor = existsInResults ? '\x1b[36m' : '\x1b[33m'; // Cyan for found, Yellow for not found
+    const existsColor = existsInResults ? '\x1b[36m' : '\x1b[33m';
     
     console.log(`${result.name}:`);
     console.log(`  ${existsColor}${existsText}${resetColor}`);
@@ -99,14 +96,9 @@ export function printResults(results: TestResultWithConfig[]): void {
       console.log(`  Description: ${result.description}`);
     }
     
-    if (result.path) {
-      console.log(`  Path: ${result.path}`);
-    }
-    
-    console.log(''); // Empty line for spacing
+    console.log(''); 
   });
-  
-  // Print summary
+
   const passed = results.filter(r => r.status === 'passed').length;
   const failed = results.filter(r => r.status === 'failed').length;
   const notFound = results.filter(r => r.status === 'not found').length;

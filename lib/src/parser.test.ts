@@ -19,7 +19,6 @@ describe('Parser', () => {
 
   describe('matchTestsWithConfig', () => {
     it('should match tests with config correctly', () => {
-      // Sample test results
       const jestResults: JestTestResult = {
         testResults: [
           {
@@ -49,19 +48,16 @@ describe('Parser', () => {
           {
             id: 'test1',
             name: 'Math should add two numbers correctly',
-            path: 'src/math.test.js',
             description: 'Tests the add function'
           },
           {
             id: 'test2',
             name: 'Math should subtract two numbers correctly',
-            path: 'src/math.test.js',
             description: 'Tests the subtract function'
           },
           {
             id: 'test3',
             name: 'Math should multiply two numbers correctly',
-            path: 'src/math.test.js',
             description: 'Tests the multiply function'
           }
         ]
@@ -73,21 +69,18 @@ describe('Parser', () => {
           id: 'test1',
           name: 'Math should add two numbers correctly',
           status: 'passed',
-          path: 'src/math.test.js',
           description: 'Tests the add function'
         },
         {
           id: 'test2',
           name: 'Math should subtract two numbers correctly',
           status: 'failed',
-          path: 'src/math.test.js',
           description: 'Tests the subtract function'
         },
         {
           id: 'test3',
           name: 'Math should multiply two numbers correctly',
           status: 'not found',
-          path: 'src/math.test.js',
           description: 'Tests the multiply function'
         }
       ];
@@ -108,21 +101,18 @@ describe('Parser', () => {
           id: 'test1',
           name: 'Test 1',
           status: 'passed',
-          path: 'src/test1.js',
           description: 'Description 1'
         },
         {
           id: 'test2',
           name: 'Test 2',
           status: 'failed',
-          path: 'src/test2.js',
           description: 'Description 2'
         },
         {
           id: 'test3',
           name: 'Test 3',
           status: 'not found',
-          path: 'src/test3.js',
           description: 'Description 3'
         }
       ];

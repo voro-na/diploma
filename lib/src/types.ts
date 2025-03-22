@@ -28,7 +28,6 @@ export interface TestConfig {
 export interface TestDefinition {
   id: string;
   name: string;
-  path?: string;
   description?: string;
 }
 
@@ -39,7 +38,6 @@ export interface TestResultWithConfig {
   id: string;
   name: string;
   status: 'passed' | 'failed' | 'not found';
-  path?: string;
   description?: string;
 }
 
