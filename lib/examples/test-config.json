@@ -1,0 +1,64 @@
+{
+  "tests": [
+    {
+      "id": "test1",
+      "name": "Math should add two numbers correctly",
+      "path": "src/math.test.js",
+      "description": "Tests the add function"
+    },
+    {
+      "id": "test2",
+      "name": "Math should subtract two numbers correctly",
+      "path": "src/math.test.js",
+      "description": "Tests the subtract function"
+    },
+    {
+      "id": "test3",
+      "name": "User service should create a user",
+      "path": "src/user/user.service.test.js",
+      "description": "Tests user creation functionality"
+    },
+    {
+      "id": "test4",
+      "name": "User service should update a user",
+      "path": "src/user/user.service.test.js",
+      "description": "Tests user update functionality"
+    },
+    {
+      "id": "test5",
+      "name": "User service should delete a user",
+      "path": "src/user/user.service.test.js",
+      "description": "Tests user deletion functionality"
+    },
+    {
+      "id": "test6",
+      "name": "Math should multiply two numbers correctly",
+      "path": "src/math.test.js",
+      "description": "Tests the multiply function"
+    },
+    {
+      "id": "test7",
+      "name": "Math should divide two numbers correctly",
+      "path": "src/math.test.js",
+      "description": "Tests the divide function"
+    },
+    {
+      "id": "test8",
+      "name": "User service should get a user by ID",
+      "path": "src/user/user.service.test.js",
+      "description": "Tests user retrieval functionality"
+    },
+    {
+      "id": "test9",
+      "name": "Auth service should authenticate a user",
+      "path": "src/auth/auth.service.test.js",
+      "description": "Tests user authentication"
+    },
+    {
+      "id": "test10",
+      "name": "Auth service should validate a token",
+      "path": "src/auth/auth.service.test.js",
+      "description": "Tests token validation"
+    }
+  ]
+}

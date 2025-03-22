@@ -1,0 +1,48 @@
+{
+  "numFailedTestSuites": 0,
+  "numFailedTests": 1,
+  "numPassedTestSuites": 2,
+  "numPassedTests": 4,
+  "numPendingTestSuites": 0,
+  "numPendingTests": 0,
+  "numRuntimeErrorTestSuites": 0,
+  "numTotalTestSuites": 2,
+  "numTotalTests": 5,
+  "testResults": [
+    {
+      "testFilePath": "src/math.test.js",
+      "testResults": [
+        {
+          "ancestorTitles": ["Math"],
+          "title": "should add two numbers correctly",
+          "status": "passed"
+        },
+        {
+          "ancestorTitles": ["Math"],
+          "title": "should subtract two numbers correctly",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "testFilePath": "src/user/user.service.test.js",
+      "testResults": [
+        {
+          "ancestorTitles": ["User service"],
+          "title": "should create a user",
+          "status": "passed"
+        },
+        {
+          "ancestorTitles": ["User service"],
+          "title": "should update a user",
+          "status": "passed"
+        },
+        {
+          "ancestorTitles": ["User service"],
+          "title": "should delete a user",
+          "status": "failed"
+        }
+      ]
+    }
+  ]
+}

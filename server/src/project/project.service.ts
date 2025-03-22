@@ -16,7 +16,7 @@ export class ProjectService {
     @InjectModel(Project.name) private projectModel: Model<Project>,
     @InjectModel(TestGroup.name) private testsModel: Model<TestGroup>,
     @InjectModel(Feature.name) private featureModel: Model<Feature>,
-  ) {}
+  ) { }
 
   async createProject(createProjectDto: CreateProjectDto): Promise<Project> {
     const createdProject = new this.projectModel(createProjectDto);
