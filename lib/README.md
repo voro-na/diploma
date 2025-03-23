@@ -127,10 +127,37 @@ Runs the coverage check and returns an array of test results with configuration 
 ##### sendResultsToApi
 
 ```typescript
-async sendResultsToApi(results: TestResultWithConfig[], apiUrl: string): Promise<void>
+async sendResultsToApi(
+  jestResults: JestTestResult,
+  apiBaseUrl: string,
+  projectSlug: string = 'project-5'
+): Promise<void>
 ```
 
-Sends test results to an API endpoint. (Placeholder for future implementation)
+Sends test results to an API endpoint. The method will:
+1. Group tests by their ancestor titles (test suites)
+2. For each group and feature, send the test results to the API endpoint
+3. Format the data according to the API's expected format
+
+Example:
+```typescript
+// Parse Jest results
+const jestResults = parseJestResults('./jest-results.json');
+
+// Send results to API
+await checker.sendResultsToApi(
+  jestResults,
+  'http://localhost:3000/api',
+  'project-5'
+);
+```
+
+The API endpoint should follow this pattern:
+`${apiBaseUrl}/projects/${projectSlug}/groups/${groupSlug}/features/${featureSlug}`
+
+Where:
+- `groupSlug` is derived from the first element of the test's ancestorTitles array
+- `featureSlug` is derived from the second element of the test's ancestorTitles array (or 'default' if not present)
 
 ##### fetchConfigFromApi
 

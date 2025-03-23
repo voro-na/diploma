@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Patch, Delete } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { Project } from './schemas/project.schema';
 import { CreateProjectDto } from './dto/project.dto';
@@ -6,7 +6,7 @@ import { CreateTestGroupDto } from './dto/tests.dto';
 
 @Controller('projects')
 export class ProjectsController {
-  constructor(private readonly projectsService: ProjectService) {}
+  constructor(private readonly projectsService: ProjectService) { }
 
   @Post()
   async create(@Body() createProjectDto: CreateProjectDto): Promise<Project> {
@@ -44,6 +44,19 @@ export class ProjectsController {
       groupSlug,
       featureSlug,
       createTestsDto,
+    );
+  }
+
+  @Delete(':projectSlug/groups/:groupSlug/features/:featureSlug')
+  async removeFeature(
+    @Param('projectSlug') projectSlug: string,
+    @Param('groupSlug') groupSlug: string,
+    @Param('featureSlug') featureSlug: string,
+  ) {
+    return this.projectsService.removeFeature(
+      projectSlug,
+      groupSlug,
+      featureSlug,
     );
   }
 }

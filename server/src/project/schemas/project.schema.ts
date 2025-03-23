@@ -9,7 +9,7 @@ export class Feature {
   @Prop({ required: true, unique: true })
   slug: string;
 
-  @Prop({ required: true })
+  @Prop()
   name: string;
 
   @Prop()
@@ -30,7 +30,7 @@ export class Group {
   @Prop({ required: true, unique: true })
   slug: string;
 
-  @Prop({ required: true })
+  @Prop()
   name: string;
 
   @Prop()

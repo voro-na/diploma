@@ -1,5 +1,8 @@
 #!/usr/bin/env node
+import * as fs from 'fs';
+import * as path from 'path';
 import { JestCoverageChecker } from './index';
+import { parseJestResults } from './parser';
 
 // Parse command line arguments
 const args = process.argv.slice(2);
@@ -40,7 +43,7 @@ Usage:
 Options:
   --results, -r <path>    Path to Jest test results JSON file (required unless using --fetch-config)
   --config, -c <path>     Path to test configuration JSON file (required unless using --fetch-config)
-  --api-url, -a <url>     API URL for fetching config or sending results
+  --api-url, -a <url>     Base API URL for fetching config or sending results (e.g., http://localhost:3000/api)
   --fetch-config          Fetch test configuration from API
   --send-results          Send test results to API
   --help, -h              Show this help message
@@ -48,8 +51,16 @@ Options:
 Examples:
   jest-coverage-checker --results ./jest-results.json --config ./test-config.json
   jest-coverage-checker -r ./jest-results.json -c ./test-config.json
-  jest-coverage-checker -r ./jest-results.json -a https://api.example.com/config --fetch-config
-  jest-coverage-checker -r ./jest-results.json -c ./test-config.json -a https://api.example.com/results --send-results
+  jest-coverage-checker -r ./jest-results.json -a http://localhost:3000/api --fetch-config
+  jest-coverage-checker -r ./jest-results.json -c ./test-config.json -a http://localhost:3000/api --send-results
+
+API Integration:
+  When using --send-results, the tool will send test results to:
+  {api-url}/projects/project-5/groups/{groupSlug}/features/{featureSlug}
+  
+  Where:
+  - groupSlug is derived from the first element of the test's ancestorTitles array
+  - featureSlug is derived from the second element (or 'default' if not present)
 `);
 }
 
@@ -90,9 +101,17 @@ async function run() {
     const results = await checker.run();
 
     // Send results to API if requested
-    if (sendResults && apiUrl) {
-      await checker.sendResultsToApi(results, apiUrl);
-      console.log('Sent results to API');
+    if (sendResults && apiUrl && jestResultsPath) {
+      try {
+        // Parse the Jest results file
+        const jestResults = parseJestResults(jestResultsPath);
+        
+        // Send the results to the API
+        await checker.sendResultsToApi(jestResults, apiUrl);
+        console.log('Sent results to API');
+      } catch (error) {
+        console.error('Error sending results to API:', error);
+      }
     }
 
     // Exit with appropriate code based on test results

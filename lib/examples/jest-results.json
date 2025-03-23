@@ -13,34 +13,9 @@
       "testFilePath": "src/math.test.js",
       "testResults": [
         {
-          "ancestorTitles": ["Math"],
-          "title": "should add two numbers correctly",
+          "ancestorTitles": ["group-1", "feature9"],
+          "title": "should add two numbers correctly rrr",
           "status": "passed"
-        },
-        {
-          "ancestorTitles": ["Math"],
-          "title": "should subtract two numbers correctly",
-          "status": "passed"
-        }
-      ]
-    },
-    {
-      "testFilePath": "src/user/user.service.test.js",
-      "testResults": [
-        {
-          "ancestorTitles": ["User service"],
-          "title": "should create a user",
-          "status": "passed"
-        },
-        {
-          "ancestorTitles": ["User service"],
-          "title": "should update a user",
-          "status": "passed"
-        },
-        {
-          "ancestorTitles": ["User service"],
-          "title": "should delete a user",
-          "status": "failed"
         }
       ]
     }
