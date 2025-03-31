@@ -4,8 +4,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { isValidObjectId, Model, Document } from 'mongoose';
-import { Feature, Group, Project, ProjectDocument } from './schemas/project.schema';
+import { isValidObjectId, Model } from 'mongoose';
+import { Feature, Group, Project } from './schemas/project.schema';
 import { CreateProjectDto } from './dto/project.dto';
 import { CreateTestGroupDto } from './dto/tests.dto';
 import { TestGroup } from './schemas/tests.schema';
@@ -16,7 +16,7 @@ export class ProjectService {
     @InjectModel(Project.name) private projectModel: Model<Project>,
     @InjectModel(TestGroup.name) private testsModel: Model<TestGroup>,
     @InjectModel(Feature.name) private featureModel: Model<Feature>,
-  ) { }
+  ) {}
 
   async createProject(createProjectDto: CreateProjectDto): Promise<Project> {
     const createdProject = new this.projectModel(createProjectDto);
@@ -55,24 +55,19 @@ export class ProjectService {
   async createGroup(
     projectSlug: string,
     groupSlug: string,
-    groupName?: string
+    groupName?: string,
   ): Promise<Group> {
-    // Find the project using the existing findProject method
     const project = await this.findProject(projectSlug);
 
-    // Check if group already exists
     let group = project.groups.find((g) => g.slug === groupSlug);
 
-    // If group doesn't exist, create it
     if (!group) {
-
       group = {
         slug: groupSlug,
         name: groupName || groupSlug,
-        features: []
+        features: [],
       };
 
-      // Add the new group to the project
       project.groups.push(group);
 
       await project.save();
@@ -93,7 +88,7 @@ export class ProjectService {
     projectSlug: string,
     groupSlug: string,
     featureSlug: string,
-    featureName?: string
+    featureName?: string,
   ) {
     const project = await this.findProject(projectSlug);
 
@@ -106,10 +101,9 @@ export class ProjectService {
         name: featureName || featureSlug,
         allTestCount: 0,
         passTestCount: 0,
-        testGroup: []
+        testGroup: [],
       };
 
-      // Add the new feature to the group
       group.features.push(feature);
 
       await project.save();
@@ -132,54 +126,85 @@ export class ProjectService {
     featureSlug: string,
     tests: CreateTestGroupDto[],
   ): Promise<Project> {
-    const project = await this.projectModel.findOne({ slug: projectSlug });
+    const project = await this.projectModel.findOne({
+      slug: projectSlug,
+      'groups.slug': groupSlug,
+      'groups.features.slug': featureSlug,
+    });
 
-    if (!project) {
-      throw new NotFoundException('Project not found');
-    }
-
-    // Find or create group
-    let group = project.groups.find((g) => g.slug === groupSlug);
-    if (!group) {
-      group = {
-        slug: groupSlug,
-        name: groupSlug,
-        features: [],
-      };
-      project.groups.push(group);
-    }
     const createdTestGroups = await this.testsModel.insertMany(tests);
+    const testGroupIds = createdTestGroups.map((tg) => tg._id);
 
-    // Find or create feature
-    let feature = group.features.find((f) => f.slug === featureSlug);
-
-    if (!feature) {
-      feature = {
-        slug: featureSlug,
-        name: featureSlug,
-        testGroup: createdTestGroups.map((tg) => tg._id),
-        allTestCount: 0,
-        passTestCount: 0,
-      };
-      group.features.push(feature);
-    } else {
-      feature.testGroup.push(...createdTestGroups.map((tg) => tg._id));
+    if (project) {
+      return this.projectModel.findOneAndUpdate(
+        {
+          slug: projectSlug,
+          'groups.slug': groupSlug,
+          'groups.features.slug': featureSlug,
+        },
+        {
+          $push: {
+            'groups.$[groupElem].features.$[featureElem].testGroup': {
+              $each: testGroupIds,
+            },
+          },
+        },
+        {
+          arrayFilters: [
+            { 'groupElem.slug': groupSlug },
+            { 'featureElem.slug': featureSlug },
+          ],
+          new: true,
+        },
+      );
     }
+
+    const projectWithGroup = await this.projectModel.findOne({
+      slug: projectSlug,
+      'groups.slug': groupSlug,
+    });
+
+    const newFeature: Feature = {
+      slug: featureSlug,
+      name: featureSlug,
+      testGroup: testGroupIds,
+      allTestCount: 0,
+      passTestCount: 0,
+    };
+
+    if (projectWithGroup) {
+      return this.projectModel.findOneAndUpdate(
+        { slug: projectSlug, 'groups.slug': groupSlug },
+        {
+          $push: {
+            'groups.$[group].features': newFeature,
+          },
+        },
+        {
+          arrayFilters: [{ 'group.slug': groupSlug }],
+          new: true,
+        },
+      );
+    }
+
+    const newGroup: Group = {
+      slug: groupSlug,
+      name: groupSlug,
+      features: [newFeature],
+    };
+
+    return this.projectModel.findOneAndUpdate(
+      { slug: projectSlug },
+      {
+        $push: { groups: newGroup },
+      },
+      { new: true },
+    );
 
     // feature.allTestCount = (feature.allTestCount || 0) + tests.reduce((sum, group) =>
     //   sum + group.tests.length, 0);
     // feature.passTestCount = (feature.passTestCount || 0) + tests.reduce((sum, group) =>
     //   sum + group.tests.filter(test => test.status === 'passed').length, 0);
-
-    await project.save();
-
-    return this.projectModel
-      .findOne({ slug: projectSlug })
-      .populate({
-        path: 'groups.features.testGroup',
-        model: 'TestGroup'
-      })
-      .exec();
   }
 
   /**
@@ -220,7 +245,7 @@ export class ProjectService {
   async removeFeature(
     projectSlug: string,
     groupSlug: string,
-    featureSlug: string
+    featureSlug: string,
   ): Promise<Project> {
     const project = await this.projectModel.findOne({ slug: projectSlug });
 
@@ -233,7 +258,9 @@ export class ProjectService {
       throw new NotFoundException('Group not found');
     }
 
-    const featureIndex = group.features.findIndex((f) => f.slug === featureSlug);
+    const featureIndex = group.features.findIndex(
+      (f) => f.slug === featureSlug,
+    );
     if (featureIndex === -1) {
       throw new NotFoundException('Feature not found');
     }

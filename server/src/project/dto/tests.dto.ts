@@ -9,3 +9,10 @@ export class CreateTestGroupDto {
   readonly name: string;
   readonly tests: CreateTestDto[];
 }
+
+
+export class CreateReportDto {
+  readonly featureSlug: string;
+  readonly groupSlug: string;
+  readonly report: CreateTestGroupDto[];
+}

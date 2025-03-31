@@ -13,7 +13,7 @@
       "testFilePath": "src/math.test.js",
       "testResults": [
         {
-          "ancestorTitles": ["group-1", "feature9"],
+          "ancestorTitles": ["group-4", "ping2"],
           "title": "should add two numbers correctly rrr",
           "status": "passed"
         }

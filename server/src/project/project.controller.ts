@@ -1,12 +1,20 @@
-import { Controller, Post, Body, Get, Param, Patch, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Patch,
+  Delete,
+} from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { Project } from './schemas/project.schema';
 import { CreateProjectDto } from './dto/project.dto';
-import { CreateTestGroupDto } from './dto/tests.dto';
+import { CreateReportDto, CreateTestGroupDto } from './dto/tests.dto';
 
 @Controller('projects')
 export class ProjectsController {
-  constructor(private readonly projectsService: ProjectService) { }
+  constructor(private readonly projectsService: ProjectService) {}
 
   @Post()
   async create(@Body() createProjectDto: CreateProjectDto): Promise<Project> {
@@ -45,6 +53,21 @@ export class ProjectsController {
       featureSlug,
       createTestsDto,
     );
+  }
+
+  @Post(':projectSlug/upload')
+  async uploadReport(
+    @Param('projectSlug') projectSlug: string,
+    @Body() body: CreateReportDto[],
+  ) {
+    for (const report of body) {
+      await this.projectsService.addTests(
+        projectSlug,
+        report.groupSlug,
+        report.featureSlug,
+        report.report,
+      );
+    }
   }
 
   @Delete(':projectSlug/groups/:groupSlug/features/:featureSlug')
