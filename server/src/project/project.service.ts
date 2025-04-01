@@ -135,6 +135,17 @@ export class ProjectService {
     const createdTestGroups = await this.testsModel.insertMany(tests);
     const testGroupIds = createdTestGroups.map((tg) => tg._id);
 
+    const passTestCount = tests.reduce(
+      (sum, group) =>
+        sum + group.tests.filter((test) => test.status === 'passed').length,
+      0,
+    );
+
+    const allTestCount = tests.reduce(
+      (sum, group) => sum + group.tests.length,
+      0,
+    );
+
     if (project) {
       return this.projectModel.findOneAndUpdate(
         {
@@ -147,6 +158,12 @@ export class ProjectService {
             'groups.$[groupElem].features.$[featureElem].testGroup': {
               $each: testGroupIds,
             },
+          },
+          $inc: {
+            'groups.$[groupElem].features.$[featureElem].allTestCount':
+              allTestCount,
+            'groups.$[groupElem].features.$[featureElem].passTestCount':
+              passTestCount,
           },
         },
         {
@@ -168,8 +185,8 @@ export class ProjectService {
       slug: featureSlug,
       name: featureSlug,
       testGroup: testGroupIds,
-      allTestCount: 0,
-      passTestCount: 0,
+      allTestCount,
+      passTestCount,
     };
 
     if (projectWithGroup) {
@@ -200,11 +217,6 @@ export class ProjectService {
       },
       { new: true },
     );
-
-    // feature.allTestCount = (feature.allTestCount || 0) + tests.reduce((sum, group) =>
-    //   sum + group.tests.length, 0);
-    // feature.passTestCount = (feature.passTestCount || 0) + tests.reduce((sum, group) =>
-    //   sum + group.tests.filter(test => test.status === 'passed').length, 0);
   }
 
   /**
