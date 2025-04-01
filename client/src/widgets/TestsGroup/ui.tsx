@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { useRouter } from 'next/router';
 
-import { Card, Stack, Typography } from '@mui/material';
+import { Card, Chip, ChipOwnProps, Stack, Typography } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 
 import { PieChartWithCenterLabel } from '@/features/PieChart';
@@ -15,6 +15,16 @@ interface ITestRowData {
     test: string;
     id: string;
 }
+
+const renderStatus = (status: Status) => {
+    const colors: Record<Status, ChipOwnProps['color']> = {
+        [Status.PASS]: 'success',
+        [Status.FAIL]: 'error',
+        [Status.SKIP]: 'default',
+    };
+
+    return <Chip label={status} color={colors[status]} variant='outlined' />;
+};
 
 export const TestsGroup: FC = () => {
     const router = useRouter();
@@ -126,6 +136,8 @@ export const TestsGroup: FC = () => {
                         hideable: false,
                         groupable: false,
                         disableColumnMenu: true,
+                        renderCell: (params) =>
+                            renderStatus(params.value as Status),
                     },
                 ]}
                 rows={getRowsData(tests)}

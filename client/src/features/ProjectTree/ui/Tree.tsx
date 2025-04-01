@@ -6,9 +6,7 @@ import { ParsedUrlQuery } from 'querystring';
 import { Alert, Skeleton } from '@mui/material';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 
-import {
-    useGetProjectBySlugQuery,
-} from '@/entities/project/api';
+import { useGetProjectBySlugQuery } from '@/entities/project/api';
 import { DotIcon } from '@/shared/ui/icons';
 
 import { mapDataToTreeItems } from '../helpers';
@@ -29,13 +27,14 @@ export const ProjectTree: FC = () => {
     };
 
     const onItemClick = (id: string) => {
-        const isGroup = data?.groups.find((group) => group.slug === id);
-
-        if (isGroup) {
-            updatePath({ group: id });
+        const group = data?.groups.filter((group) =>
+            group.features.find((feature) => feature.slug === id)
+        );
+        console.log(group);
+        if (!group?.length) {
             return;
         }
-        updatePath({ feature: id });
+        updatePath({ feature: id, group: group[0].slug });
     };
 
     return (
