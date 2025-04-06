@@ -35,20 +35,20 @@ export class ProjectsController {
     return this.projectsService.createGroup(projectSlug, groupSlug, groupName);
   }
 
-  // @Post(':projectSlug/groups/:groupSlug/features/:featureSlug')
-  // async createFeature(
-  //   @Param('projectSlug') projectSlug: string,
-  //   @Param('groupSlug') groupSlug: string,
-  //   @Param('featureSlug') featureSlug: string,
-  //   @Body('name') featureName?: string,
-  // ) {
-  //   return this.projectsService.createFeature(
-  //     projectSlug,
-  //     groupSlug,
-  //     featureSlug,
-  //     featureName,
-  //   );
-  // }
+  @Post(':projectSlug/groups/:groupSlug/features/:featureSlug')
+  async createFeature(
+    @Param('projectSlug') projectSlug: string,
+    @Param('groupSlug') groupSlug: string,
+    @Param('featureSlug') featureSlug: string,
+    @Body('name') featureName?: string,
+  ) {
+    return this.projectsService.createFeature(
+      projectSlug,
+      groupSlug,
+      featureSlug,
+      featureName,
+    );
+  }
 
   // @Get(':projectSlug/groups/:groupSlug/features/:featureSlug')
   // async getTestGroups(

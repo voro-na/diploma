@@ -3,13 +3,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ProjectService } from './project.service';
 import { ProjectsController } from './project.controller';
 import {
-  Feature,
-  FeaturesSchema,
   Project,
   ProjectSchema,
 } from './schemas/project.schema';
 import { TestGroup, TestGroupSchema } from './schemas/tests.schema';
 import { Group, GroupSchema } from './schemas/group.schema';
+import { Feature, FeaturesSchema } from './schemas/feature.schema';
 
 @Module({
   imports: [

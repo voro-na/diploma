@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types, Schema as MongooseSchema } from 'mongoose';
 import { Project } from './project.schema';
-// import { Feature } from './project.schema';
+import { Feature } from './feature.schema';
 
 export type GroupDocument = Group & Document;
 
@@ -19,8 +19,8 @@ export class Group {
     @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Project' })
     project: Project;
 
-    // @Prop({ type: [Feature], default: [] })
-    // features: Feature[];
+    @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Feature' }], default: [] })
+    features: Feature[];
 }
 
 export const GroupSchema = SchemaFactory.createForClass(Group); 

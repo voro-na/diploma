@@ -10,12 +10,14 @@ import { Group } from './schemas/group.schema';
 import { CreateProjectDto } from './dto/project.dto';
 import { CreateTestGroupDto } from './dto/tests.dto';
 import { TestGroup } from './schemas/tests.schema';
+import { Feature } from './schemas/feature.schema';
 
 @Injectable()
 export class ProjectService {
   constructor(
     @InjectModel(Project.name) private projectModel: Model<Project>,
     @InjectModel(Group.name) private groupModel: Model<Group>,
+    @InjectModel(Feature.name) private featureModel: Model<Feature>,
     @InjectModel(TestGroup.name) private testsModel: Model<TestGroup>,
   ) { }
 
@@ -40,7 +42,7 @@ export class ProjectService {
   async findProject(slug: string) {
     const project = await this.projectModel
       .findOne({ slug })
-      .populate('groups')
+      .populate({ path: 'groups', populate: { path: 'features' } })
       .exec();
 
     if (!project) {
@@ -94,38 +96,54 @@ export class ProjectService {
   /**
    * Creates a new feature in a group if it doesn't exist
    * @param projectSlug The slug of the project
-   * @param group The group to add the feature to
+   * @param groupSlug The slug of the group
    * @param featureSlug The slug of the feature to create
    * @param featureName Optional name for the feature (defaults to slug)
    * @returns The created or existing feature
    */
-  // async createFeature(
-  //   projectSlug: string,
-  //   groupSlug: string,
-  //   featureSlug: string,
-  //   featureName?: string,
-  // ) {
-  //   const project = await this.findProject(projectSlug);
+  async createFeature(
+    projectSlug: string,
+    groupSlug: string,
+    featureSlug: string,
+    featureName?: string,
+  ): Promise<Feature> {
+    const project = await this.projectModel.findOne({ slug: projectSlug });
+    if (!project) {
+      throw new NotFoundException(`Project with slug ${projectSlug} not found`);
+    }
 
-  //   let group = project.groups.find((g) => g.slug === groupSlug);
-  //   let feature = group.features.find((f) => f.slug === featureSlug);
+    const group = await this.groupModel.findOne({
+      slug: groupSlug,
+      project: project._id,
+    });
+    if (!group) {
+      throw new NotFoundException(`Group with slug ${groupSlug} not found in project ${projectSlug}`);
+    }
 
-  //   if (!feature) {
-  //     feature = {
-  //       slug: featureSlug,
-  //       name: featureName || featureSlug,
-  //       allTestCount: 0,
-  //       passTestCount: 0,
-  //       testGroup: [],
-  //     };
+    const existingFeature = await this.featureModel.findOne({
+      slug: featureSlug,
+      group: group._id,
+    });
+    if (existingFeature) {
+      throw new BadRequestException(`Feature with slug "${featureSlug}" already exists in group "${groupSlug}"`);
+    }
 
-  //     group.features.push(feature);
+    const feature = new this.featureModel({
+      slug: featureSlug,
+      name: featureName || featureSlug,
+      group: group._id,
+    });
 
-  //     await project.save();
-  //   }
+    await feature.save();
 
-  //   return feature;
-  // }
+    await this.groupModel.findByIdAndUpdate(
+      group._id,
+      { $push: { features: feature._id } },
+      { new: true }
+    );
+
+    return feature;
+  }
 
   /**
    * Adds tests to a feature, creating the group and feature if they don't exist
