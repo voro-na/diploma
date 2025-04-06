@@ -1,12 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
+import { Document, Types, Schema as MongooseSchema } from 'mongoose';
+import { Group } from './group.schema';
 import { TestGroup } from './tests.schema';
 
-export type ProjectDocument = HydratedDocument<Project>;
+export type ProjectDocument = Project & Document;
 
 @Schema()
 export class Feature {
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true })
   slug: string;
 
   @Prop()
@@ -21,23 +22,8 @@ export class Feature {
   @Prop()
   passTestCount: number;
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'TestGroup' }], default: [] })
-  testGroup: Types.ObjectId[];
-}
-
-@Schema()
-export class Group {
-  @Prop({ required: true, unique: true })
-  slug: string;
-
-  @Prop()
-  name: string;
-
-  @Prop()
-  description?: string;
-
-  @Prop({ type: [Feature], default: [] })
-  features: Feature[];
+  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'TestGroup' }], default: [] })
+  testGroup: TestGroup[];
 }
 
 @Schema()
@@ -51,10 +37,9 @@ export class Project {
   @Prop()
   description?: string;
 
-  @Prop({ type: [Group], default: [] })
+  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Group' }], default: [] })
   groups: Group[];
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);
-export const GroupSchema = SchemaFactory.createForClass(Group);
 export const FeaturesSchema = SchemaFactory.createForClass(Feature);

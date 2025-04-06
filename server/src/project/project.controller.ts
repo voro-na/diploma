@@ -14,16 +14,11 @@ import { CreateReportDto, CreateTestGroupDto } from './dto/tests.dto';
 
 @Controller('projects')
 export class ProjectsController {
-  constructor(private readonly projectsService: ProjectService) {}
+  constructor(private readonly projectsService: ProjectService) { }
 
   @Post()
-  async create(@Body() createProjectDto: CreateProjectDto): Promise<Project> {
+  async createProject(@Body() createProjectDto: CreateProjectDto): Promise<Project> {
     return this.projectsService.createProject(createProjectDto);
-  }
-
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<Project> {
-    return this.projectsService.findProjectById(id);
   }
 
   @Get('/slug/:slug')
@@ -31,55 +26,79 @@ export class ProjectsController {
     return this.projectsService.findProject(slug);
   }
 
-  @Get(':projectSlug/groups/:groupSlug/features/:featureSlug')
-  async getTestGroups(
+  @Post(':projectSlug/groups/:groupSlug')
+  async createGroup(
     @Param('projectSlug') projectSlug: string,
     @Param('groupSlug') groupSlug: string,
-    @Param('featureSlug') featureSlug: string,
+    @Body('name') groupName?: string,
   ) {
-    return this.projectsService.findTests(projectSlug, groupSlug, featureSlug);
+    return this.projectsService.createGroup(projectSlug, groupSlug, groupName);
   }
 
-  @Post(':projectSlug/groups/:groupSlug/features/:featureSlug')
-  async addTests(
-    @Param('projectSlug') projectSlug: string,
-    @Param('groupSlug') groupSlug: string,
-    @Param('featureSlug') featureSlug: string,
-    @Body() createTestsDto: CreateTestGroupDto[],
-  ) {
-    return this.projectsService.addTests(
-      projectSlug,
-      groupSlug,
-      featureSlug,
-      createTestsDto,
-    );
-  }
+  // @Post(':projectSlug/groups/:groupSlug/features/:featureSlug')
+  // async createFeature(
+  //   @Param('projectSlug') projectSlug: string,
+  //   @Param('groupSlug') groupSlug: string,
+  //   @Param('featureSlug') featureSlug: string,
+  //   @Body('name') featureName?: string,
+  // ) {
+  //   return this.projectsService.createFeature(
+  //     projectSlug,
+  //     groupSlug,
+  //     featureSlug,
+  //     featureName,
+  //   );
+  // }
 
-  @Post(':projectSlug/upload')
-  async uploadReport(
-    @Param('projectSlug') projectSlug: string,
-    @Body() body: CreateReportDto[],
-  ) {
-    for (const report of body) {
-      await this.projectsService.addTests(
-        projectSlug,
-        report.groupSlug,
-        report.featureSlug,
-        report.report,
-      );
-    }
-  }
+  // @Get(':projectSlug/groups/:groupSlug/features/:featureSlug')
+  // async getTestGroups(
+  //   @Param('projectSlug') projectSlug: string,
+  //   @Param('groupSlug') groupSlug: string,
+  //   @Param('featureSlug') featureSlug: string,
+  // ) {
+  //   return this.projectsService.findTests(projectSlug, groupSlug, featureSlug);
+  // }
 
-  @Delete(':projectSlug/groups/:groupSlug/features/:featureSlug')
-  async removeFeature(
-    @Param('projectSlug') projectSlug: string,
-    @Param('groupSlug') groupSlug: string,
-    @Param('featureSlug') featureSlug: string,
-  ) {
-    return this.projectsService.removeFeature(
-      projectSlug,
-      groupSlug,
-      featureSlug,
-    );
-  }
+  // @Post(':projectSlug/groups/:groupSlug/features/:featureSlug')
+  // async addTests(
+  //   @Param('projectSlug') projectSlug: string,
+  //   @Param('groupSlug') groupSlug: string,
+  //   @Param('featureSlug') featureSlug: string,
+  //   @Body() createTestsDto: CreateTestGroupDto[],
+  // ) {
+  //   return this.projectsService.addTests(
+  //     projectSlug,
+  //     groupSlug,
+  //     featureSlug,
+  //     createTestsDto,
+  //   );
+  // }
+
+  // @Post(':projectSlug/upload')
+  // async uploadReport(
+  //   @Param('projectSlug') projectSlug: string,
+  //   @Body() body: CreateReportDto[],
+  // ) {
+  //   for (const report of body) {
+  //     await this.projectsService.addTests(
+  //       projectSlug,
+  //       report.groupSlug,
+  //       report.featureSlug,
+  //       report.report,
+  //     );
+  //   }
+  // }
+
+  // @Delete(':projectSlug/groups/:groupSlug/features/:featureSlug')
+  // async removeFeature(
+  //   @Param('projectSlug') projectSlug: string,
+  //   @Param('groupSlug') groupSlug: string,
+  //   @Param('featureSlug') featureSlug: string,
+  // ) {
+  //   return this.projectsService.removeFeature(
+  //     projectSlug,
+  //     groupSlug,
+  //     featureSlug,
+  //   );
+  // }
 }

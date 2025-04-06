@@ -5,7 +5,8 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { isValidObjectId, Model } from 'mongoose';
-import { Feature, Group, Project } from './schemas/project.schema';
+import { Project } from './schemas/project.schema';
+import { Group } from './schemas/group.schema';
 import { CreateProjectDto } from './dto/project.dto';
 import { CreateTestGroupDto } from './dto/tests.dto';
 import { TestGroup } from './schemas/tests.schema';
@@ -14,30 +15,33 @@ import { TestGroup } from './schemas/tests.schema';
 export class ProjectService {
   constructor(
     @InjectModel(Project.name) private projectModel: Model<Project>,
+    @InjectModel(Group.name) private groupModel: Model<Group>,
     @InjectModel(TestGroup.name) private testsModel: Model<TestGroup>,
-    @InjectModel(Feature.name) private featureModel: Model<Feature>,
-  ) {}
+  ) { }
 
-  async createProject(createProjectDto: CreateProjectDto): Promise<Project> {
-    const createdProject = new this.projectModel(createProjectDto);
-    return createdProject.save();
-  }
-
-  async findProjectById(id: string): Promise<Project> {
-    if (!isValidObjectId(id)) {
-      throw new BadRequestException(`Invalid ID format: ${id}`);
+  async createProject(projectData: CreateProjectDto): Promise<Project> {
+    if (!projectData.slug) {
+      throw new BadRequestException('Project slug is required');
     }
 
-    const project = await this.projectModel.findById(id).exec();
-
-    if (!project) {
-      throw new NotFoundException(`Project with id ${id} not found`);
+    if (!projectData.name) {
+      throw new BadRequestException('Project name is required');
     }
-    return project;
+
+    const existingProject = await this.projectModel.findOne({ slug: projectData.slug }).exec();
+    if (existingProject) {
+      throw new BadRequestException(`Project with slug "${projectData.slug}" already exists`);
+    }
+
+    const project = new this.projectModel(projectData);
+    return project.save();
   }
 
   async findProject(slug: string) {
-    const project = await this.projectModel.findOne({ slug }).exec();
+    const project = await this.projectModel
+      .findOne({ slug })
+      .populate('groups')
+      .exec();
 
     if (!project) {
       throw new NotFoundException(`Project with slug ${slug} not found`);
@@ -57,21 +61,32 @@ export class ProjectService {
     groupSlug: string,
     groupName?: string,
   ): Promise<Group> {
-    const project = await this.findProject(projectSlug);
-
-    let group = project.groups.find((g) => g.slug === groupSlug);
-
-    if (!group) {
-      group = {
-        slug: groupSlug,
-        name: groupName || groupSlug,
-        features: [],
-      };
-
-      project.groups.push(group);
-
-      await project.save();
+    const project = await this.projectModel.findOne({ slug: projectSlug });
+    if (!project) {
+      throw new NotFoundException(`Project with slug ${projectSlug} not found`);
     }
+
+    const existingGroup = await this.groupModel.findOne({
+      slug: groupSlug,
+      project: project._id,
+    });
+
+    if (existingGroup) {
+      throw new BadRequestException(`Group with slug "${groupSlug}" already exists in project "${projectSlug}"`);
+    }
+
+    const group = new this.groupModel({
+      slug: groupSlug,
+      name: groupName || groupSlug,
+      project: project._id,
+    });
+    await group.save();
+
+    await this.projectModel.findByIdAndUpdate(
+      project._id,
+      { $push: { groups: group._id } },
+      { new: true }
+    );
 
     return group;
   }
@@ -84,33 +99,33 @@ export class ProjectService {
    * @param featureName Optional name for the feature (defaults to slug)
    * @returns The created or existing feature
    */
-  async createFeature(
-    projectSlug: string,
-    groupSlug: string,
-    featureSlug: string,
-    featureName?: string,
-  ) {
-    const project = await this.findProject(projectSlug);
+  // async createFeature(
+  //   projectSlug: string,
+  //   groupSlug: string,
+  //   featureSlug: string,
+  //   featureName?: string,
+  // ) {
+  //   const project = await this.findProject(projectSlug);
 
-    let group = project.groups.find((g) => g.slug === groupSlug);
-    let feature = group.features.find((f) => f.slug === featureSlug);
+  //   let group = project.groups.find((g) => g.slug === groupSlug);
+  //   let feature = group.features.find((f) => f.slug === featureSlug);
 
-    if (!feature) {
-      feature = {
-        slug: featureSlug,
-        name: featureName || featureSlug,
-        allTestCount: 0,
-        passTestCount: 0,
-        testGroup: [],
-      };
+  //   if (!feature) {
+  //     feature = {
+  //       slug: featureSlug,
+  //       name: featureName || featureSlug,
+  //       allTestCount: 0,
+  //       passTestCount: 0,
+  //       testGroup: [],
+  //     };
 
-      group.features.push(feature);
+  //     group.features.push(feature);
 
-      await project.save();
-    }
+  //     await project.save();
+  //   }
 
-    return feature;
-  }
+  //   return feature;
+  // }
 
   /**
    * Adds tests to a feature, creating the group and feature if they don't exist
@@ -120,104 +135,104 @@ export class ProjectService {
    * @param tests The test groups to add
    * @returns The updated project
    */
-  async addTests(
-    projectSlug: string,
-    groupSlug: string,
-    featureSlug: string,
-    tests: CreateTestGroupDto[],
-  ): Promise<Project> {
-    const project = await this.projectModel.findOne({
-      slug: projectSlug,
-      'groups.slug': groupSlug,
-      'groups.features.slug': featureSlug,
-    });
+  // async addTests(
+  //   projectSlug: string,
+  //   groupSlug: string,
+  //   featureSlug: string,
+  //   tests: CreateTestGroupDto[],
+  // ): Promise<Project> {
+  //   const project = await this.projectModel.findOne({
+  //     slug: projectSlug,
+  //     'groups.slug': groupSlug,
+  //     'groups.features.slug': featureSlug,
+  //   });
 
-    const createdTestGroups = await this.testsModel.insertMany(tests);
-    const testGroupIds = createdTestGroups.map((tg) => tg._id);
+  //   const createdTestGroups = await this.testsModel.insertMany(tests);
+  //   const testGroupIds = createdTestGroups.map((tg) => tg._id);
 
-    const passTestCount = tests.reduce(
-      (sum, group) =>
-        sum + group.tests.filter((test) => test.status === 'passed').length,
-      0,
-    );
+  //   const passTestCount = tests.reduce(
+  //     (sum, group) =>
+  //       sum + group.tests.filter((test) => test.status === 'passed').length,
+  //     0,
+  //   );
 
-    const allTestCount = tests.reduce(
-      (sum, group) => sum + group.tests.length,
-      0,
-    );
+  //   const allTestCount = tests.reduce(
+  //     (sum, group) => sum + group.tests.length,
+  //     0,
+  //   );
 
-    if (project) {
-      return this.projectModel.findOneAndUpdate(
-        {
-          slug: projectSlug,
-          'groups.slug': groupSlug,
-          'groups.features.slug': featureSlug,
-        },
-        {
-          $push: {
-            'groups.$[groupElem].features.$[featureElem].testGroup': {
-              $each: testGroupIds,
-            },
-          },
-          $inc: {
-            'groups.$[groupElem].features.$[featureElem].allTestCount':
-              allTestCount,
-            'groups.$[groupElem].features.$[featureElem].passTestCount':
-              passTestCount,
-          },
-        },
-        {
-          arrayFilters: [
-            { 'groupElem.slug': groupSlug },
-            { 'featureElem.slug': featureSlug },
-          ],
-          new: true,
-        },
-      );
-    }
+  //   if (project) {
+  //     return this.projectModel.findOneAndUpdate(
+  //       {
+  //         slug: projectSlug,
+  //         'groups.slug': groupSlug,
+  //         'groups.features.slug': featureSlug,
+  //       },
+  //       {
+  //         $push: {
+  //           'groups.$[groupElem].features.$[featureElem].testGroup': {
+  //             $each: testGroupIds,
+  //           },
+  //         },
+  //         $inc: {
+  //           'groups.$[groupElem].features.$[featureElem].allTestCount':
+  //             allTestCount,
+  //           'groups.$[groupElem].features.$[featureElem].passTestCount':
+  //             passTestCount,
+  //         },
+  //       },
+  //       {
+  //         arrayFilters: [
+  //           { 'groupElem.slug': groupSlug },
+  //           { 'featureElem.slug': featureSlug },
+  //         ],
+  //         new: true,
+  //       },
+  //     );
+  //   }
 
-    const projectWithGroup = await this.projectModel.findOne({
-      slug: projectSlug,
-      'groups.slug': groupSlug,
-    });
+  //   const projectWithGroup = await this.projectModel.findOne({
+  //     slug: projectSlug,
+  //     'groups.slug': groupSlug,
+  //   });
 
-    const newFeature: Feature = {
-      slug: featureSlug,
-      name: featureSlug,
-      testGroup: testGroupIds,
-      allTestCount,
-      passTestCount,
-    };
+  //   const newFeature: Feature = {
+  //     slug: featureSlug,
+  //     name: featureSlug,
+  //     testGroup: testGroupIds,
+  //     allTestCount,
+  //     passTestCount,
+  //   };
 
-    if (projectWithGroup) {
-      return this.projectModel.findOneAndUpdate(
-        { slug: projectSlug, 'groups.slug': groupSlug },
-        {
-          $push: {
-            'groups.$[group].features': newFeature,
-          },
-        },
-        {
-          arrayFilters: [{ 'group.slug': groupSlug }],
-          new: true,
-        },
-      );
-    }
+  //   if (projectWithGroup) {
+  //     return this.projectModel.findOneAndUpdate(
+  //       { slug: projectSlug, 'groups.slug': groupSlug },
+  //       {
+  //         $push: {
+  //           'groups.$[group].features': newFeature,
+  //         },
+  //       },
+  //       {
+  //         arrayFilters: [{ 'group.slug': groupSlug }],
+  //         new: true,
+  //       },
+  //     );
+  //   }
 
-    const newGroup: Group = {
-      slug: groupSlug,
-      name: groupSlug,
-      features: [newFeature],
-    };
+  //   const newGroup: Group = {
+  //     slug: groupSlug,
+  //     name: groupSlug,
+  //     features: [newFeature],
+  //   };
 
-    return this.projectModel.findOneAndUpdate(
-      { slug: projectSlug },
-      {
-        $push: { groups: newGroup },
-      },
-      { new: true },
-    );
-  }
+  //   return this.projectModel.findOneAndUpdate(
+  //     { slug: projectSlug },
+  //     {
+  //       $push: { groups: newGroup },
+  //     },
+  //     { new: true },
+  //   );
+  // }
 
   /**
    * Finds tests for a feature, creating the group and feature if they don't exist
@@ -226,67 +241,67 @@ export class ProjectService {
    * @param featureSlug The slug of the feature
    * @returns The feature info and test groups
    */
-  async findTests(
-    projectSlug: string,
-    groupSlug: string,
-    featureSlug: string,
-  ): Promise<{ info: Feature; tests: TestGroup[] }> {
-    const project = await this.projectModel.findOne({ slug: projectSlug });
+  // async findTests(
+  //   projectSlug: string,
+  //   groupSlug: string,
+  //   featureSlug: string,
+  // ): Promise<{ info: Feature; tests: TestGroup[] }> {
+  //   const project = await this.projectModel.findOne({ slug: projectSlug });
 
-    if (!project) {
-      throw new NotFoundException('Project not found');
-    }
+  //   if (!project) {
+  //     throw new NotFoundException('Project not found');
+  //   }
 
-    const group = project.groups.find((g) => g.slug === groupSlug);
-    if (!group) {
-      throw new NotFoundException('Group not found');
-    }
+  //   const group = project.groups.find((g) => g.slug === groupSlug);
+  //   if (!group) {
+  //     throw new NotFoundException('Group not found');
+  //   }
 
-    const feature = group.features.find((f) => f.slug === featureSlug);
-    if (!feature) {
-      throw new NotFoundException('Feature not found');
-    }
+  //   const feature = group.features.find((f) => f.slug === featureSlug);
+  //   if (!feature) {
+  //     throw new NotFoundException('Feature not found');
+  //   }
 
-    const testGroups = await this.testsModel.find({
-      _id: { $in: feature.testGroup },
-    });
+  //   const testGroups = await this.testsModel.find({
+  //     _id: { $in: feature.testGroup },
+  //   });
 
-    return { info: feature, tests: testGroups };
-  }
+  //   return { info: feature, tests: testGroups };
+  // }
 
-  async removeFeature(
-    projectSlug: string,
-    groupSlug: string,
-    featureSlug: string,
-  ): Promise<Project> {
-    const project = await this.projectModel.findOne({ slug: projectSlug });
+  // async removeFeature(
+  //   projectSlug: string,
+  //   groupSlug: string,
+  //   featureSlug: string,
+  // ): Promise<Project> {
+  //   const project = await this.projectModel.findOne({ slug: projectSlug });
 
-    if (!project) {
-      throw new NotFoundException('Project not found');
-    }
+  //   if (!project) {
+  //     throw new NotFoundException('Project not found');
+  //   }
 
-    const group = project.groups.find((g) => g.slug === groupSlug);
-    if (!group) {
-      throw new NotFoundException('Group not found');
-    }
+  //   const group = project.groups.find((g) => g.slug === groupSlug);
+  //   if (!group) {
+  //     throw new NotFoundException('Group not found');
+  //   }
 
-    const featureIndex = group.features.findIndex(
-      (f) => f.slug === featureSlug,
-    );
-    if (featureIndex === -1) {
-      throw new NotFoundException('Feature not found');
-    }
+  //   const featureIndex = group.features.findIndex(
+  //     (f) => f.slug === featureSlug,
+  //   );
+  //   if (featureIndex === -1) {
+  //     throw new NotFoundException('Feature not found');
+  //   }
 
-    group.features.splice(featureIndex, 1);
+  //   group.features.splice(featureIndex, 1);
 
-    await project.save();
+  //   await project.save();
 
-    return this.projectModel
-      .findOne({ slug: projectSlug })
-      .populate({
-        path: 'groups.features.testGroup',
-        model: 'TestGroup',
-      })
-      .exec();
-  }
+  //   return this.projectModel
+  //     .findOne({ slug: projectSlug })
+  //     .populate({
+  //       path: 'groups.features.testGroup',
+  //       model: 'TestGroup',
+  //     })
+  //     .exec();
+  // }
 }

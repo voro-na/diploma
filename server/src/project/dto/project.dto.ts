@@ -26,9 +26,9 @@ export class CreateProjectDto {
   name: string;
 
   @IsString()
+  slug: string;
+
+  @IsString()
   description?: string;
 
-  @ValidateNested({ each: true })
-  @Type(() => CreateGroupDto)
-  groups: CreateGroupDto[];
 }

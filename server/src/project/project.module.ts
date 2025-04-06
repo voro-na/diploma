@@ -9,10 +9,12 @@ import {
   ProjectSchema,
 } from './schemas/project.schema';
 import { TestGroup, TestGroupSchema } from './schemas/tests.schema';
+import { Group, GroupSchema } from './schemas/group.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Project.name, schema: ProjectSchema }]),
+    MongooseModule.forFeature([{ name: Group.name, schema: GroupSchema }]),
     MongooseModule.forFeature([{ name: Feature.name, schema: FeaturesSchema }]),
     MongooseModule.forFeature([
       { name: TestGroup.name, schema: TestGroupSchema },
@@ -21,4 +23,4 @@ import { TestGroup, TestGroupSchema } from './schemas/tests.schema';
   controllers: [ProjectsController],
   providers: [ProjectService],
 })
-export class ProjectModule {}
+export class ProjectModule { }

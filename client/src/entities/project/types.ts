@@ -11,7 +11,7 @@ export interface IGroup {
     slug: string;
     name: string;
     description?: string | null;
-    features: IFeature[];
+    features?: IFeature[];
 }
 
 export interface IFeature {

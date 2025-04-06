@@ -7,3 +7,7 @@
     flex: 1;
     overflow: auto
 }
+
+.ProjectPage-header {
+    padding: 8px 16px;
+}

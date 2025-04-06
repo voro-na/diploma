@@ -15,7 +15,7 @@ export const mapDataToTreeItems = (data: IProject): TreeViewBaseItem[] => {
             acc.push({
                 id: project._id,
                 label: project.name,
-                children: project.features.map((feature) => ({
+                children: project.features?.map((feature) => ({
                     id: feature._id,
                     label: feature.name,
                     allTestCount: feature.allTestCount,
