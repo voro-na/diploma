@@ -42,22 +42,27 @@ export class ProjectsController {
     @Param('featureSlug') featureSlug: string,
     @Body('name') featureName?: string,
   ) {
-    return this.projectsService.createFeature(
-      projectSlug,
-      groupSlug,
-      featureSlug,
-      featureName,
-    );
+    return this.projectsService.createFeature(projectSlug, groupSlug, featureSlug, featureName);
   }
 
-  // @Get(':projectSlug/groups/:groupSlug/features/:featureSlug')
-  // async getTestGroups(
-  //   @Param('projectSlug') projectSlug: string,
-  //   @Param('groupSlug') groupSlug: string,
-  //   @Param('featureSlug') featureSlug: string,
-  // ) {
-  //   return this.projectsService.findTests(projectSlug, groupSlug, featureSlug);
-  // }
+  @Post(':projectSlug/groups/:groupSlug/features/:featureSlug/tests')
+  async createTestGroup(
+    @Param('projectSlug') projectSlug: string,
+    @Param('groupSlug') groupSlug: string,
+    @Param('featureSlug') featureSlug: string,
+    @Body() testGroupData: CreateTestGroupDto,
+  ) {
+    return this.projectsService.createTestGroup(projectSlug, groupSlug, featureSlug, testGroupData);
+  }
+
+  @Get(':projectSlug/groups/:groupSlug/features/:featureSlug')
+  async getTestGroups(
+    @Param('projectSlug') projectSlug: string,
+    @Param('groupSlug') groupSlug: string,
+    @Param('featureSlug') featureSlug: string,
+  ) {
+    return this.projectsService.findTests(projectSlug, groupSlug, featureSlug);
+  }
 
   // @Post(':projectSlug/groups/:groupSlug/features/:featureSlug')
   // async addTests(

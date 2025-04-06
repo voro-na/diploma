@@ -20,8 +20,8 @@ export class Feature {
     @Prop({ default: 0 })
     passTestCount: number;
 
-    // @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'TestGroup' }], default: [] })
-    // testGroup: TestGroup[];
+    @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'TestGroup' }], default: [] })
+    testGroup: TestGroup[];
 
     @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Group' })
     group: Group;

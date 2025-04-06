@@ -146,6 +146,58 @@ export class ProjectService {
   }
 
   /**
+   * Creates a new test group in a feature
+   * @param projectSlug The slug of the project
+   * @param groupSlug The slug of the group
+   * @param featureSlug The slug of the feature
+   * @param testGroupData The data for the test group
+   * @returns The created test group
+   */
+  async createTestGroup(
+    projectSlug: string,
+    groupSlug: string,
+    featureSlug: string,
+    testGroupData: CreateTestGroupDto,
+  ): Promise<TestGroup> {
+    const project = await this.projectModel.findOne({ slug: projectSlug });
+    if (!project) {
+      throw new NotFoundException(`Project with slug ${projectSlug} not found`);
+    }
+
+    const group = await this.groupModel.findOne({
+      slug: groupSlug,
+      project: project._id,
+    });
+    if (!group) {
+      throw new NotFoundException(`Group with slug ${groupSlug} not found in project ${projectSlug}`);
+    }
+
+    const feature = await this.featureModel.findOne({
+      slug: featureSlug,
+      group: group._id,
+    });
+    if (!feature) {
+      throw new NotFoundException(`Feature with slug ${featureSlug} not found in group ${groupSlug}`);
+    }
+
+    const testGroup = new this.testsModel({
+      name: testGroupData.name,
+      tests: testGroupData.tests,
+      feature: feature._id,
+    });
+
+    await testGroup.save();
+
+    await this.featureModel.findByIdAndUpdate(
+      feature._id,
+      { $push: { testGroup: testGroup._id } },
+      { new: true }
+    );
+
+    return testGroup;
+  }
+
+  /**
    * Adds tests to a feature, creating the group and feature if they don't exist
    * @param projectSlug The slug of the project
    * @param groupSlug The slug of the group
@@ -259,33 +311,38 @@ export class ProjectService {
    * @param featureSlug The slug of the feature
    * @returns The feature info and test groups
    */
-  // async findTests(
-  //   projectSlug: string,
-  //   groupSlug: string,
-  //   featureSlug: string,
-  // ): Promise<{ info: Feature; tests: TestGroup[] }> {
-  //   const project = await this.projectModel.findOne({ slug: projectSlug });
+  async findTests(
+    projectSlug: string,
+    groupSlug: string,
+    featureSlug: string,
+  ): Promise<{ info: Feature; tests: TestGroup[] }> {
+    const project = await this.projectModel.findOne({ slug: projectSlug });
+    if (!project) {
+      throw new NotFoundException(`Project with slug ${projectSlug} not found`);
+    }
 
-  //   if (!project) {
-  //     throw new NotFoundException('Project not found');
-  //   }
+    const group = await this.groupModel.findOne({
+      slug: groupSlug,
+      project: project._id,
+    });
+    if (!group) {
+      throw new NotFoundException(`Group with slug ${groupSlug} not found in project ${projectSlug}`);
+    }
 
-  //   const group = project.groups.find((g) => g.slug === groupSlug);
-  //   if (!group) {
-  //     throw new NotFoundException('Group not found');
-  //   }
+    const feature = await this.featureModel.findOne({
+      slug: featureSlug,
+      group: group._id,
+    });
+    if (!feature) {
+      throw new NotFoundException(`Feature with slug ${featureSlug} not found in group ${groupSlug}`);
+    }
 
-  //   const feature = group.features.find((f) => f.slug === featureSlug);
-  //   if (!feature) {
-  //     throw new NotFoundException('Feature not found');
-  //   }
+    const testGroups = await this.testsModel.find({
+      _id: { $in: feature.testGroup },
+    }).exec();
 
-  //   const testGroups = await this.testsModel.find({
-  //     _id: { $in: feature.testGroup },
-  //   });
-
-  //   return { info: feature, tests: testGroups };
-  // }
+    return { info: feature, tests: testGroups };
+  }
 
   // async removeFeature(
   //   projectSlug: string,
