@@ -13,10 +13,10 @@ export const mapDataToTreeItems = (data: IProject): TreeViewBaseItem[] => {
     return data.groups.reduce(
         (acc: TreeViewBaseItem<ExtendedTreeItemProps>[], project) => {
             acc.push({
-                id: project.slug,
+                id: project._id,
                 label: project.name,
                 children: project.features.map((feature) => ({
-                    id: feature.slug,
+                    id: feature._id,
                     label: feature.name,
                     allTestCount: feature.allTestCount,
                     passTestCount: feature.passTestCount,

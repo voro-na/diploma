@@ -3,7 +3,8 @@ import {
     CoverageCheckerOptions,
     JestTestResult,
     TestConfig,
-    TestResultWithConfig
+    TestResultWithConfig,
+    CreateTestGroupDto
 } from './types';
 import {
     loadTestConfig,
@@ -58,10 +59,14 @@ export class JestCoverageChecker {
 
         // Match tests with configuration
         const results = matchTestsWithConfig(jestResults, config);
-
         // Print results to console if enabled
         if (this.options.outputToConsole) {
             printResults(results);
+        }
+
+        // If API URL is provided in options, send results to API
+        if (this.options.apiBaseUrl) {
+            await this.sendResultsToApi(results, this.options.apiBaseUrl, this.options.projectSlug || 'project-5');
         }
 
         return results;
@@ -69,76 +74,61 @@ export class JestCoverageChecker {
 
     /**
      * Sends test results to an API endpoint
-     * @param jestResults Raw Jest test results
+     * @param results Test results with configuration information
      * @param apiBaseUrl Base API URL (e.g., http://localhost:3000/api)
      * @param projectSlug Project slug (default: 'project-5')
      * @returns Promise that resolves when the results have been sent
      */
     async sendResultsToApi(
-        jestResults: JestTestResult,
+        results: TestResultWithConfig[],
         apiBaseUrl: string,
-        projectSlug: string = 'project-5'
+        projectSlug: string
     ): Promise<void> {
         try {
             console.log(`Sending results to API: ${apiBaseUrl}`);
-            
-            // Group tests by their ancestor titles
-            const testsByGroup = new Map<string, Map<string, any[]>>();
-            
-            // Process all test results
-            jestResults.testResults.forEach((fileResult) => {
-                fileResult.testResults.forEach((testResult) => {
-                    const groupSlug = testResult.ancestorTitles[0] || 'default';
-                    const featureSlug = testResult.ancestorTitles[1] || 'default';
-                    
-                    // Initialize group if it doesn't exist
-                    if (!testsByGroup.has(groupSlug)) {
-                        testsByGroup.set(groupSlug, new Map<string, any[]>());
-                    }
-                    
-                    // Initialize feature if it doesn't exist
-                    const groupMap = testsByGroup.get(groupSlug)!;
-                    if (!groupMap.has(featureSlug)) {
-                        groupMap.set(featureSlug, []);
-                    }
-                    
-                    // Add test to feature
-                    const featureTests = groupMap.get(featureSlug)!;
-                    featureTests.push({
-                        name: testResult.title,
-                        description: `Test from ${fileResult.testFilePath}`,
-                        status: testResult.status
-                    });
-                });
-            });
-            
-            // Send results for each group and feature
-            for (const [groupSlug, groupMap] of testsByGroup.entries()) {
-                for (const [featureSlug, tests] of groupMap.entries()) {
-                    const url = `${apiBaseUrl}/projects/${projectSlug}/groups/${groupSlug}/features/${featureSlug}`;
-                    
-                    // Format data according to CreateTestGroupDto
-                    const payload = [
-                        {
-                            name: `${groupSlug} - ${featureSlug}`,
-                            tests: tests.map(test => ({
-                                name: test.name,
-                                description: test.description,
-                                status: test.status
-                            }))
-                        }
-                    ];
-                    
-                    console.log(`Sending ${tests.length} tests to ${url}`);
 
-                    console.log(url, payload)
-                    
-                    // Make API call
-                    const response = await axios.post(url, payload);
-                    console.log(`API response status: ${response.status}`);
+            // Get groupSlug and featureSlug from the first result
+            const groupSlug = results[0]?.groupSlug || 'default';
+            const featureSlug = results[0]?.featureSlug || 'default';
+
+            // Group tests by their status
+            const testsByStatus = new Map<string, TestResultWithConfig[]>();
+
+            // Process all test results
+            results.forEach((testResult) => {
+                const status = testResult.status;
+                if (!testsByStatus.has(status)) {
+                    testsByStatus.set(status, []);
                 }
+                testsByStatus.get(status)!.push(testResult);
+            });
+
+            // Create payload according to CreateTestGroupDto interface
+            const payload: CreateTestGroupDto[] = [];
+
+            // Send results for each status group
+            for (const [status, tests] of testsByStatus.entries()) {
+                // Format data for API according to CreateTestGroupDto and CreateTestDto interfaces
+                const testGroup: CreateTestGroupDto = {
+                    name: featureSlug,
+                    tests: tests.map(test => ({
+                        name: test.name,
+                        description: test.description,
+                        status: test.status
+                    }))
+                };
+
+                payload.push(testGroup);
             }
-            
+
+            const apiUrl = `${apiBaseUrl}/projects/${projectSlug}/groups/${groupSlug}/features/${featureSlug}`;
+            console.log(`Sending test results to ${apiUrl}`);
+            console.log(payload);
+
+            // Make API call
+            const response = await axios.post(apiUrl, payload);
+            console.log(`API response status: ${response.status}`);
+
             console.log('All test results sent to API successfully');
         } catch (error) {
             console.error('Error sending results to API:', error);

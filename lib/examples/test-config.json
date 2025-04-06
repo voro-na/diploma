@@ -1,4 +1,6 @@
 {
+  "groupSlug": "math",
+  "featureSlug": "arithmetic",
   "tests": [
     {
       "id": "test1",

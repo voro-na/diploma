@@ -28,13 +28,13 @@ export const ProjectTree: FC = () => {
 
     const onItemClick = (id: string) => {
         const group = data?.groups.filter((group) =>
-            group.features.find((feature) => feature.slug === id)
+            group.features.find((feature) => feature._id === id)
         );
         console.log(group);
         if (!group?.length) {
             return;
         }
-        updatePath({ feature: id, group: group[0].slug });
+        updatePath({ feature: group[0].features[0].slug, group: group[0].slug });
     };
 
     return (

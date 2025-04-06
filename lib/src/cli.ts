@@ -89,6 +89,7 @@ async function run() {
     const checker = new JestCoverageChecker({
       jestResultsPath,
       configPath,
+      projectSlug: 'project-4'
     });
 
     // Fetch config from API if requested
@@ -103,11 +104,8 @@ async function run() {
     // Send results to API if requested
     if (sendResults && apiUrl && jestResultsPath) {
       try {
-        // Parse the Jest results file
-        const jestResults = parseJestResults(jestResultsPath);
-        
         // Send the results to the API
-        await checker.sendResultsToApi(jestResults, apiUrl);
+        await checker.sendResultsToApi(results, apiUrl, 'project-4');
         console.log('Sent results to API');
       } catch (error) {
         console.error('Error sending results to API:', error);

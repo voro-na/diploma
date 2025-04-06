@@ -43,7 +43,7 @@ export function matchTestsWithConfig(
 ): TestResultWithConfig[] {
   // Create a map of test names to test results
   const testMap = new Map<string, { status: 'passed' | 'failed' }>();
-  
+
   // Process all test results
   jestResults.testResults.forEach((fileResult) => {
     fileResult.testResults.forEach((testResult) => {
@@ -52,16 +52,18 @@ export function matchTestsWithConfig(
       testMap.set(fullName, { status: testResult.status });
     });
   });
-  
+
   // Match tests from config with results
   return config.tests.map((testConfig) => {
     const testResult = testMap.get(testConfig.name);
-    
+
     return {
       id: testConfig.id,
       name: testConfig.name,
       status: testResult ? testResult.status : 'not found',
-      description: testConfig.description,
+      description: testConfig.description || '',
+      groupSlug: config.groupSlug || '',
+      featureSlug: config.featureSlug || ''
     };
   });
 }
@@ -72,38 +74,38 @@ export function matchTestsWithConfig(
  */
 export function printResults(results: TestResultWithConfig[]): void {
   console.log('\n=== Jest Coverage Checker Results ===\n');
-  
+
   results.forEach((result) => {
-    const statusColor = 
+    const statusColor =
       result.status === 'passed' ? '\x1b[32m' :  // Green
-      result.status === 'failed' ? '\x1b[31m' :  // Red
-      '\x1b[33m';                                // Yellow for 'not found'
-    
+        result.status === 'failed' ? '\x1b[31m' :  // Red
+          '\x1b[33m';                                // Yellow for 'not found'
+
     const resetColor = '\x1b[0m';
-    
+
     const existsInResults = result.status !== 'not found';
     const existsText = existsInResults ? 'Found in test results' : 'Not found in test results';
     const existsColor = existsInResults ? '\x1b[36m' : '\x1b[33m';
-    
+
     console.log(`${result.name}:`);
     console.log(`  ${existsColor}${existsText}${resetColor}`);
-    
+
     if (existsInResults) {
       console.log(`  Status: ${statusColor}${result.status}${resetColor}`);
     }
-    
+
     if (result.description) {
       console.log(`  Description: ${result.description}`);
     }
-    
-    console.log(''); 
+
+    console.log('');
   });
 
   const passed = results.filter(r => r.status === 'passed').length;
   const failed = results.filter(r => r.status === 'failed').length;
   const notFound = results.filter(r => r.status === 'not found').length;
   const found = passed + failed;
-  
+
   console.log('Summary:');
   console.log(`  Total tests in config: ${results.length}`);
   console.log(`  Found in test results: ${found}`);

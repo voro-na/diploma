@@ -20,6 +20,8 @@ export interface JestTestResult {
  */
 export interface TestConfig {
   tests: TestDefinition[];
+  groupSlug?: string;
+  featureSlug?: string;
 }
 
 /**
@@ -37,8 +39,11 @@ export interface TestDefinition {
 export interface TestResultWithConfig {
   id: string;
   name: string;
-  status: 'passed' | 'failed' | 'not found';
-  description?: string;
+  status: string;
+  description: string;
+  groupSlug: string;
+  featureSlug: string;
+  config?: TestDefinition;
 }
 
 /**
@@ -49,24 +54,52 @@ export interface CoverageCheckerOptions {
    * Path to the Jest test results JSON file
    */
   jestResultsPath?: string;
-  
+
   /**
    * Path to the test configuration JSON file
    */
   configPath?: string;
-  
+
   /**
    * Test configuration object (alternative to configPath)
    */
   config?: TestConfig;
-  
+
   /**
    * Jest test results object (alternative to jestResultsPath)
    */
   jestResults?: JestTestResult;
-  
+
   /**
    * Whether to output results to console
    */
   outputToConsole?: boolean;
+
+  /**
+   * Base API URL for sending results (e.g., http://localhost:3000/api)
+   */
+  apiBaseUrl?: string;
+
+  /**
+   * Project slug for API endpoints (default: 'project-5')
+   */
+  projectSlug?: string;
+}
+
+/**
+ * Interface for test data sent to the API
+ */
+export interface CreateTestDto {
+  name: string;
+  description?: string;
+  link?: string;
+  status: string;
+}
+
+/**
+ * Interface for test group data sent to the API
+ */
+export interface CreateTestGroupDto {
+  name: string;
+  tests: CreateTestDto[];
 }
