@@ -10,6 +10,7 @@ import {
 import { ProjectService } from './services/project.service';
 import { GroupService } from './services/group.service';
 import { FeatureService } from './services/feature.service';
+import { TestsService } from './services/tests.service';
 import { Project } from './schemas/project.schema';
 import { CreateProjectDto } from './dto/project.dto';
 import { CreateTestGroupDto } from './dto/tests.dto';
@@ -20,6 +21,7 @@ export class ProjectsController {
     private readonly projectsService: ProjectService,
     private readonly groupService: GroupService,
     private readonly featureService: FeatureService,
+    private readonly testsService: TestsService,
   ) { }
 
   @Post()
@@ -58,7 +60,7 @@ export class ProjectsController {
     @Param('featureSlug') featureSlug: string,
     @Body() testGroupData: CreateTestGroupDto,
   ) {
-    return this.projectsService.createTestGroup(projectSlug, groupSlug, featureSlug, testGroupData);
+    return this.testsService.createTestGroup(projectSlug, groupSlug, featureSlug, testGroupData);
   }
 
   @Get(':projectSlug/groups/:groupSlug/features/:featureSlug')
@@ -67,7 +69,7 @@ export class ProjectsController {
     @Param('groupSlug') groupSlug: string,
     @Param('featureSlug') featureSlug: string,
   ) {
-    return this.projectsService.findTests(projectSlug, groupSlug, featureSlug);
+    return this.testsService.findTests(projectSlug, groupSlug, featureSlug);
   }
 
   @Delete(':projectSlug/groups/:groupSlug/features/:featureSlug/tests/:testGroupId')
@@ -77,7 +79,7 @@ export class ProjectsController {
     @Param('featureSlug') featureSlug: string,
     @Param('testGroupId') testGroupId: string,
   ) {
-    return this.projectsService.removeTestGroup(projectSlug, groupSlug, featureSlug, testGroupId);
+    return this.testsService.removeTestGroup(projectSlug, groupSlug, featureSlug, testGroupId);
   }
 
   // @Post(':projectSlug/groups/:groupSlug/features/:featureSlug')

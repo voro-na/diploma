@@ -8,6 +8,7 @@ import { ProjectsController } from './project.controller';
 import { ProjectService } from './services/project.service';
 import { GroupService } from './services/group.service';
 import { FeatureService } from './services/feature.service';
+import { TestsService } from './services/tests.service';
 import { ProjectHelpers } from './helpers/project.helpers';
 
 @Module({
@@ -20,7 +21,7 @@ import { ProjectHelpers } from './helpers/project.helpers';
     ]),
   ],
   controllers: [ProjectsController],
-  providers: [ProjectService, GroupService, FeatureService, ProjectHelpers],
-  exports: [ProjectService, GroupService, FeatureService],
+  providers: [ProjectService, GroupService, FeatureService, TestsService, ProjectHelpers],
+  exports: [ProjectService, GroupService, FeatureService, TestsService],
 })
 export class ProjectModule { }
