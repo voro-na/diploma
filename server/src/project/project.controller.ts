@@ -64,6 +64,16 @@ export class ProjectsController {
     return this.projectsService.findTests(projectSlug, groupSlug, featureSlug);
   }
 
+  @Delete(':projectSlug/groups/:groupSlug/features/:featureSlug/tests/:testGroupId')
+  async removeTestGroup(
+    @Param('projectSlug') projectSlug: string,
+    @Param('groupSlug') groupSlug: string,
+    @Param('featureSlug') featureSlug: string,
+    @Param('testGroupId') testGroupId: string,
+  ) {
+    return this.projectsService.removeTestGroup(projectSlug, groupSlug, featureSlug, testGroupId);
+  }
+
   // @Post(':projectSlug/groups/:groupSlug/features/:featureSlug')
   // async addTests(
   //   @Param('projectSlug') projectSlug: string,
@@ -92,18 +102,5 @@ export class ProjectsController {
   //       report.report,
   //     );
   //   }
-  // }
-
-  // @Delete(':projectSlug/groups/:groupSlug/features/:featureSlug')
-  // async removeFeature(
-  //   @Param('projectSlug') projectSlug: string,
-  //   @Param('groupSlug') groupSlug: string,
-  //   @Param('featureSlug') featureSlug: string,
-  // ) {
-  //   return this.projectsService.removeFeature(
-  //     projectSlug,
-  //     groupSlug,
-  //     featureSlug,
-  //   );
   // }
 }

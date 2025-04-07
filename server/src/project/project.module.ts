@@ -9,6 +9,7 @@ import {
 import { TestGroup, TestGroupSchema } from './schemas/tests.schema';
 import { Group, GroupSchema } from './schemas/group.schema';
 import { Feature, FeaturesSchema } from './schemas/feature.schema';
+import { ProjectHelpers } from './helpers/project.helpers';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { Feature, FeaturesSchema } from './schemas/feature.schema';
     ]),
   ],
   controllers: [ProjectsController],
-  providers: [ProjectService],
+  providers: [ProjectService, ProjectHelpers],
+  exports: [ProjectService],
 })
 export class ProjectModule { }

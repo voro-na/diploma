@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types, Schema as MongooseSchema } from 'mongoose';
-import { TestGroup } from './tests.schema';
-import { Group } from './group.schema';
+
+export type FeatureDocument = Feature & Document;
 
 @Schema()
 export class Feature {
@@ -21,10 +21,10 @@ export class Feature {
     passTestCount: number;
 
     @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'TestGroup' }], default: [] })
-    testGroup: TestGroup[];
+    testGroup: Types.ObjectId[];
 
     @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Group' })
-    group: Group;
+    group: Types.ObjectId;
 }
 
 export const FeaturesSchema = SchemaFactory.createForClass(Feature);
