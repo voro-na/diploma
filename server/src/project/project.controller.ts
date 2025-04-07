@@ -7,14 +7,20 @@ import {
   Patch,
   Delete,
 } from '@nestjs/common';
-import { ProjectService } from './project.service';
+import { ProjectService } from './services/project.service';
+import { GroupService } from './services/group.service';
+import { FeatureService } from './services/feature.service';
 import { Project } from './schemas/project.schema';
 import { CreateProjectDto } from './dto/project.dto';
-import { CreateReportDto, CreateTestGroupDto } from './dto/tests.dto';
+import { CreateTestGroupDto } from './dto/tests.dto';
 
 @Controller('projects')
 export class ProjectsController {
-  constructor(private readonly projectsService: ProjectService) { }
+  constructor(
+    private readonly projectsService: ProjectService,
+    private readonly groupService: GroupService,
+    private readonly featureService: FeatureService,
+  ) { }
 
   @Post()
   async createProject(@Body() createProjectDto: CreateProjectDto): Promise<Project> {
@@ -32,7 +38,7 @@ export class ProjectsController {
     @Param('groupSlug') groupSlug: string,
     @Body('name') groupName?: string,
   ) {
-    return this.projectsService.createGroup(projectSlug, groupSlug, groupName);
+    return this.groupService.createGroup(projectSlug, groupSlug, groupName);
   }
 
   @Post(':projectSlug/groups/:groupSlug/features/:featureSlug')
@@ -42,7 +48,7 @@ export class ProjectsController {
     @Param('featureSlug') featureSlug: string,
     @Body('name') featureName?: string,
   ) {
-    return this.projectsService.createFeature(projectSlug, groupSlug, featureSlug, featureName);
+    return this.featureService.createFeature(projectSlug, groupSlug, featureSlug, featureName);
   }
 
   @Post(':projectSlug/groups/:groupSlug/features/:featureSlug/tests')

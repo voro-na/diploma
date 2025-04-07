@@ -4,20 +4,19 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { isValidObjectId, Model } from 'mongoose';
-import { Project } from './schemas/project.schema';
-import { Group } from './schemas/group.schema';
-import { CreateProjectDto } from './dto/project.dto';
-import { CreateTestGroupDto } from './dto/tests.dto';
-import { TestGroup } from './schemas/tests.schema';
-import { Feature } from './schemas/feature.schema';
-import { ProjectHelpers } from './helpers/project.helpers';
+import { Model } from 'mongoose';
+import { Project } from '../schemas/project.schema';
+import { Group } from '../schemas/group.schema';
+import { CreateProjectDto } from '../dto/project.dto';
+import { CreateTestGroupDto } from '../dto/tests.dto';
+import { TestGroup } from '../schemas/tests.schema';
+import { Feature } from '../schemas/feature.schema';
+import { ProjectHelpers } from '../helpers/project.helpers';
 
 @Injectable()
 export class ProjectService {
   constructor(
     @InjectModel(Project.name) private projectModel: Model<Project>,
-    @InjectModel(Group.name) private groupModel: Model<Group>,
     @InjectModel(Feature.name) private featureModel: Model<Feature>,
     @InjectModel(TestGroup.name) private testsModel: Model<TestGroup>,
     private projectHelpers: ProjectHelpers,
@@ -51,86 +50,6 @@ export class ProjectService {
       throw new NotFoundException(`Project with slug ${slug} not found`);
     }
     return project;
-  }
-
-  /**
-   * Creates a new group in a project if it doesn't exist
-   * @param projectSlug The slug of the project
-   * @param groupSlug The slug of the group to create
-   * @param groupName Optional name for the group (defaults to slug)
-   * @returns The created or existing group
-   */
-  async createGroup(
-    projectSlug: string,
-    groupSlug: string,
-    groupName?: string,
-  ): Promise<Group> {
-    const project = await this.projectHelpers.checkProjectExists(projectSlug);
-
-    const existingGroup = await this.groupModel.findOne({
-      slug: groupSlug,
-      project: project._id,
-    });
-
-    if (existingGroup) {
-      throw new BadRequestException(`Group with slug "${groupSlug}" already exists in project "${projectSlug}"`);
-    }
-
-    const group = new this.groupModel({
-      slug: groupSlug,
-      name: groupName || groupSlug,
-      project: project._id,
-    });
-    await group.save();
-
-    await this.projectModel.findByIdAndUpdate(
-      project._id,
-      { $push: { groups: group._id } },
-      { new: true }
-    );
-
-    return group;
-  }
-
-  /**
-   * Creates a new feature in a group if it doesn't exist
-   * @param projectSlug The slug of the project
-   * @param groupSlug The slug of the group
-   * @param featureSlug The slug of the feature to create
-   * @param featureName Optional name for the feature (defaults to slug)
-   * @returns The created or existing feature
-   */
-  async createFeature(
-    projectSlug: string,
-    groupSlug: string,
-    featureSlug: string,
-    featureName?: string,
-  ): Promise<Feature> {
-    const group = await this.projectHelpers.checkGroupExists(projectSlug, groupSlug);
-
-    const existingFeature = await this.featureModel.findOne({
-      slug: featureSlug,
-      group: group._id,
-    });
-    if (existingFeature) {
-      throw new BadRequestException(`Feature with slug "${featureSlug}" already exists in group "${groupSlug}"`);
-    }
-
-    const feature = new this.featureModel({
-      slug: featureSlug,
-      name: featureName || featureSlug,
-      group: group._id,
-    });
-
-    await feature.save();
-
-    await this.groupModel.findByIdAndUpdate(
-      group._id,
-      { $push: { features: feature._id } },
-      { new: true }
-    );
-
-    return feature;
   }
 
   /**
