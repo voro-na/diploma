@@ -105,4 +105,42 @@ export class TestsService {
 
         return updatedFeature;
     }
+
+    /**
+     * Removes a single test from a test group
+     * @param projectSlug The slug of the project
+     * @param groupSlug The slug of the group
+     * @param featureSlug The slug of the feature
+     * @param testGroupId The ID of the test group
+     * @param testName The name of the test to remove
+     * @returns The updated test group
+     */
+    async removeTest(
+        projectSlug: string,
+        groupSlug: string,
+        featureSlug: string,
+        testGroupId: string,
+        testName: string,
+    ): Promise<TestGroup> {
+        const feature = await this.projectHelpers.checkFeatureExists(projectSlug, groupSlug, featureSlug);
+
+        const testGroup = await this.testsModel.findById(testGroupId);
+        if (!testGroup) {
+            throw new NotFoundException(`Test group with ID ${testGroupId} not found`);
+        }
+
+        if (!feature.testGroup.includes(testGroup._id)) {
+            throw new BadRequestException(`Test group with ID ${testGroupId} does not belong to feature ${featureSlug}`);
+        }
+
+        const testIndex = testGroup.tests.findIndex(test => test.name === testName);
+        if (testIndex === -1) {
+            throw new NotFoundException(`Test with name "${testName}" not found in test group`);
+        }
+
+        testGroup.tests.splice(testIndex, 1);
+        await testGroup.save();
+
+        return testGroup;
+    }
 } 

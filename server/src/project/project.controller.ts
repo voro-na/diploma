@@ -4,7 +4,6 @@ import {
   Body,
   Get,
   Param,
-  Patch,
   Delete,
 } from '@nestjs/common';
 import { ProjectService } from './services/project.service';
@@ -14,6 +13,7 @@ import { TestsService } from './services/tests.service';
 import { Project } from './schemas/project.schema';
 import { CreateProjectDto } from './dto/project.dto';
 import { CreateTestGroupDto } from './dto/tests.dto';
+import { RemoveTestDto } from './dto/tests.dto';
 
 @Controller('projects')
 export class ProjectsController {
@@ -80,6 +80,17 @@ export class ProjectsController {
     @Param('testGroupId') testGroupId: string,
   ) {
     return this.testsService.removeTestGroup(projectSlug, groupSlug, featureSlug, testGroupId);
+  }
+
+  @Delete(':projectSlug/groups/:groupSlug/features/:featureSlug/tests/:testGroupId/test')
+  async removeTest(
+    @Param('projectSlug') projectSlug: string,
+    @Param('groupSlug') groupSlug: string,
+    @Param('featureSlug') featureSlug: string,
+    @Param('testGroupId') testGroupId: string,
+    @Body() removeTestDto: RemoveTestDto,
+  ) {
+    return this.testsService.removeTest(projectSlug, groupSlug, featureSlug, testGroupId, removeTestDto.testName);
   }
 
   // @Post(':projectSlug/groups/:groupSlug/features/:featureSlug')
