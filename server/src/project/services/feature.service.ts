@@ -4,12 +4,15 @@ import { Model } from 'mongoose';
 import { Feature, FeatureDocument } from '../schemas/feature.schema';
 import { Group, GroupDocument } from '../schemas/group.schema';
 import { ProjectHelpers } from '../helpers/project.helpers';
+import { TestGroup } from '../schemas/tests.schema';
+import { TestsService } from './tests.service';
 
 @Injectable()
 export class FeatureService {
     constructor(
         @InjectModel(Feature.name) private featureModel: Model<FeatureDocument>,
         @InjectModel(Group.name) private groupModel: Model<GroupDocument>,
+        private readonly testGroupService: TestsService,
         private projectHelpers: ProjectHelpers,
     ) { }
 
@@ -52,5 +55,38 @@ export class FeatureService {
         );
 
         return feature;
+    }
+
+    async removeFeature(
+        projectSlug: string,
+        groupSlug: string,
+        featureSlug: string,
+    ): Promise<Feature> {
+        const feature = await this.projectHelpers.checkFeatureExists(projectSlug, groupSlug, featureSlug);
+        const group = await this.projectHelpers.checkGroupExists(projectSlug, groupSlug);
+
+        if (feature.testGroup && feature.testGroup.length > 0) {
+            for (const testGroupId of feature.testGroup) {
+                await this.testGroupService.removeTestGroup(
+                    projectSlug,
+                    groupSlug,
+                    featureSlug,
+                    testGroupId.toString()
+                );
+            }
+        }
+
+        const deletedFeature = await this.featureModel.findByIdAndDelete(
+            feature._id)
+
+        await this.groupModel.findByIdAndUpdate(
+            group._id,
+            {
+                $pull: { features: feature._id },
+            },
+            { new: true }
+        );
+
+        return deletedFeature;
     }
 } 
