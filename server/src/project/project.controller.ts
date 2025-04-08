@@ -103,6 +103,14 @@ export class ProjectsController {
     return this.featureService.removeFeature(projectSlug, groupSlug, featureSlug);
   }
 
+  @Delete(':projectSlug/groups/:groupSlug')
+  async removeGroup(
+    @Param('projectSlug') projectSlug: string,
+    @Param('groupSlug') groupSlug: string,
+  ) {
+    return this.groupService.removeGroup(projectSlug, groupSlug);
+  }
+
   // @Post(':projectSlug/groups/:groupSlug/features/:featureSlug')
   // async addTests(
   //   @Param('projectSlug') projectSlug: string,
