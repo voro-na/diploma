@@ -24,3 +24,11 @@ export class RemoveTestDto {
   @IsNotEmpty()
   testName: string;
 }
+
+export class EditTestDto {
+  @IsString()
+  @IsNotEmpty()
+  testName: string;
+  
+  readonly newData: CreateTestDto;
+}

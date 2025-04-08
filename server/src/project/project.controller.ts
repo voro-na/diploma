@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Delete,
+  Patch,
 } from '@nestjs/common';
 import { ProjectService } from './services/project.service';
 import { GroupService } from './services/group.service';
@@ -12,8 +13,7 @@ import { FeatureService } from './services/feature.service';
 import { TestsService } from './services/tests.service';
 import { Project } from './schemas/project.schema';
 import { CreateProjectDto } from './dto/project.dto';
-import { CreateTestGroupDto } from './dto/tests.dto';
-import { RemoveTestDto } from './dto/tests.dto';
+import { CreateTestDto, CreateTestGroupDto, EditTestDto, RemoveTestDto } from './dto/tests.dto';
 
 @Controller('projects')
 export class ProjectsController {
@@ -91,6 +91,35 @@ export class ProjectsController {
     @Body() removeTestDto: RemoveTestDto,
   ) {
     return this.testsService.removeTest(projectSlug, groupSlug, featureSlug, testGroupId, removeTestDto.testName);
+  }
+
+  @Post(':projectSlug/groups/:groupSlug/features/:featureSlug/tests/:testGroupId/test')
+  async addTest(
+    @Param('projectSlug') projectSlug: string,
+    @Param('groupSlug') groupSlug: string,
+    @Param('featureSlug') featureSlug: string,
+    @Param('testGroupId') testGroupId: string,
+    @Body() testData: CreateTestDto,
+  ) {
+    return this.testsService.addTest(projectSlug, groupSlug, featureSlug, testGroupId, testData);
+  }
+
+  @Patch(':projectSlug/groups/:groupSlug/features/:featureSlug/tests/:testGroupId/test')
+  async editTest(
+    @Param('projectSlug') projectSlug: string,
+    @Param('groupSlug') groupSlug: string,
+    @Param('featureSlug') featureSlug: string,
+    @Param('testGroupId') testGroupId: string,
+    @Body() editTestDto: EditTestDto,
+  ) {
+    return this.testsService.editTest(
+      projectSlug, 
+      groupSlug, 
+      featureSlug, 
+      testGroupId, 
+      editTestDto.testName, 
+      editTestDto.newData
+    );
   }
 
 

@@ -1,11 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Schema as MongooseSchema, Types } from 'mongoose';
 
-const enum Status {
-  PASS = 'PASS',
-  FAIL = 'FAIL',
-  SKIP = 'SKIP',
-}
+export type Status = 'PASSED' | 'FAILED' | 'SKIPPED';
 
 @Schema()
 export class Test {
