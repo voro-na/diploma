@@ -1,11 +1,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+import { BASE_URL } from '@/shared/api';
+
 import { IProject, ITestsDetailsResponse } from './types';
 
 export const projectApi = createApi({
     reducerPath: 'projectApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: 'http://localhost:3001/',
+        baseUrl: BASE_URL,
     }),
     endpoints: (builder) => ({
         getProjectBySlug: builder.query<IProject, string>({

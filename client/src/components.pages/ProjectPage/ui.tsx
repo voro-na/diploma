@@ -1,10 +1,12 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { useRouter } from 'next/router';
 
-import { Alert, Box, Card, Container, Typography } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import { Alert, Box, Button, Card, Container, Typography } from '@mui/material';
 
 import { PageLayout } from '@/widgets/Layout';
 import { TestsGroup } from '@/widgets/TestsGroup';
+import { AddGroupModal } from '@/features/NewEntityModal';
 import { ProjectTree } from '@/features/ProjectTree';
 import { useGetProjectBySlugQuery } from '@/entities/project';
 
@@ -14,6 +16,19 @@ export const ProjectPage: FC = () => {
     const router = useRouter();
     const projectId = router.query.projectId as string;
     const { data, error } = useGetProjectBySlugQuery(projectId);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleAddGroup = (name: string, slug: string, description?: string) => {
+        console.log('Adding new group:', { name, slug, description, projectId });
+    };
 
     return (
         <PageLayout>
@@ -25,21 +40,33 @@ export const ProjectPage: FC = () => {
                 <Card variant='outlined'>
                     {error && (
                         <Alert severity='error'>
-                            {
-                                // eslint-disable-next-line
-                                error?.data?.message || 'Some error occurred'
-                            }
+                            {(() => {
+                                if (error && 'data' in error && error.data && typeof error.data === 'object' && 'message' in error.data) {
+                                    return String(error.data.message);
+                                }
+                                return 'Some error occurred';
+                            })()}
                         </Alert>
                     )}
                     {data && (
                         <Box className={styles['ProjectPage-header']}>
-                            <Typography
-                                variant='h5'
-                                component='h1'
-                                gutterBottom
-                            >
-                                {data.name}
-                            </Typography>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <Typography
+                                    variant='h5'
+                                    component='h1'
+                                    gutterBottom
+                                >
+                                    {data.name}
+                                </Typography>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    startIcon={<AddIcon />}
+                                    onClick={handleOpenModal}
+                                >
+                                    Добавить
+                                </Button>
+                            </Box>
                             {data.description && (
                                 <Typography
                                     variant='body1'
@@ -54,6 +81,12 @@ export const ProjectPage: FC = () => {
                 </Card>
                 <TestsGroup />
             </Container>
+            <AddGroupModal
+                open={isModalOpen}
+                onClose={handleCloseModal}
+                onSubmit={handleAddGroup}
+                title='Добавить новую группу'
+            />
         </PageLayout>
-    );
-};
+    )
+}
