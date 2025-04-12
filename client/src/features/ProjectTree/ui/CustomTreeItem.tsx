@@ -18,7 +18,7 @@ import {
 } from '@mui/x-tree-view/useTreeItem2';
 
 import { AddGroupModal } from '@/features/NewEntityModal';
-import { useCreateFeatureMutation } from '@/entities/feature/api';
+import { useCreateFeatureMutation, useRemoveFeatureMutation } from '@/entities/feature/api';
 import { useRemoveGroupMutation } from '@/entities/group/api';
 import { useGetProjectBySlugQuery } from '@/entities/project';
 
@@ -36,15 +36,24 @@ export const TreeItem = forwardRef(function CustomTreeItem(
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [addFeatureModalOpen, setAddFeatureModalOpen] = useState(false);
     const [removeGroup] = useRemoveGroupMutation();
+    const [removeFeature] = useRemoveFeatureMutation();
     const [createFeature] = useCreateFeatureMutation();
     const { refetch } = useGetProjectBySlugQuery(projectSlug);
     
-    const handleDeleteGroup = async (item: ExtendedTreeItemProps) => {
+    const handleDeleteEntity = async (item: ExtendedTreeItemProps) => {
         try {
-            await removeGroup({
-                projectSlug: projectSlug,
-                groupSlug: item.groupSlug,
-            });
+            if (item.featureSlug) {
+                await removeFeature({
+                    projectSlug: projectSlug,
+                    groupSlug: item.groupSlug,
+                    featureSlug: item.featureSlug,
+                });
+            } else {
+                await removeGroup({
+                    projectSlug: projectSlug,
+                    groupSlug: item.groupSlug,
+                });
+            }
             await refetch();
         } catch (error) {}
     };
@@ -124,7 +133,7 @@ export const TreeItem = forwardRef(function CustomTreeItem(
             <DeleteEntityModal
                 open={deleteModalOpen}
                 onClose={() => setDeleteModalOpen(false)}
-                onConfirm={() =>  void handleDeleteGroup(item)}
+                onConfirm={() =>  void handleDeleteEntity(item)}
                 entityName={label as string}
             />
             

@@ -17,6 +17,7 @@ import { TreeItem } from './CustomTreeItem';
 export const ProjectTree: FC = () => {
     const router = useRouter();
     const projectSlug = router.query.projectId as string;
+    
     const { data, isLoading } = useGetProjectBySlugQuery(projectSlug);
 
     const updatePath = (query: ParsedUrlQuery) => {
@@ -28,16 +29,24 @@ export const ProjectTree: FC = () => {
     };
 
     const onItemClick = (id: string) => {
-        const group = data?.groups.filter((group) =>
-            group.features?.find((feature) => feature._id === id)
-        );
-
-        if (!group?.length) {
+        const slugs = data?.groups.reduce((acc: {featureSlug?: string; groupSlug?: string}, group) => {
+            const feature = group.features?.find((feature) => feature._id === id)
+            if (feature) {
+                acc = {
+                    featureSlug: feature.slug,
+                    groupSlug: group.slug,
+                };
+            }
+            return acc;
+        }, {});
+    
+        if (!slugs?.featureSlug || !slugs.groupSlug) {
             return;
         }
+    
         updatePath({
-            feature: group[0].features?.[0].slug || '',
-            group: group[0].slug || '',
+            feature: slugs.featureSlug || '',
+            group: slugs.groupSlug || '',
         });
     };
 
