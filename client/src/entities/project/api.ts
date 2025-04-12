@@ -14,11 +14,14 @@ export const projectApi = createApi({
             query: (slug) => `projects/slug/${slug}`,
         }),
 
-        getTestsDetails: builder.query<ITestsDetailsResponse,{ projectSlug: string; groupSlug: string; featureSlug: string }>({
+        getTestsDetails: builder.query<
+            ITestsDetailsResponse,
+            { projectSlug: string; groupSlug: string; featureSlug: string }
+        >({
             query: ({ projectSlug, groupSlug, featureSlug }) =>
                 `projects/${projectSlug}/groups/${groupSlug}/features/${featureSlug}`,
         }),
     }),
 });
 
-export const { useGetProjectBySlugQuery, useGetTestsDetailsQuery } = projectApi 
+export const { useGetProjectBySlugQuery, useGetTestsDetailsQuery } = projectApi;

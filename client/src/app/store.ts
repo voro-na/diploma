@@ -1,16 +1,24 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { createWrapper } from 'next-redux-wrapper';
 
+import { groupApi } from '@/entities/group/api';
 import { projectApi } from '@/entities/project/api';
+import { testsApi } from '@/entities/tests/api';
 
 export const store = () =>
     configureStore({
         reducer: {
             [projectApi.reducerPath]: projectApi.reducer,
+            [groupApi.reducerPath]: groupApi.reducer,
+            [testsApi.reducerPath]: testsApi.reducer,
         },
 
         middleware: (getDefaultMiddleware) =>
-            getDefaultMiddleware().concat(projectApi.middleware),
+            getDefaultMiddleware().concat(
+                projectApi.middleware,
+                groupApi.middleware,
+                testsApi.middleware
+            ),
     });
 
 export type AppStore = ReturnType<typeof store>;

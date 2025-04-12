@@ -8,6 +8,7 @@ import { PageLayout } from '@/widgets/Layout';
 import { TestsGroup } from '@/widgets/TestsGroup';
 import { AddGroupModal } from '@/features/NewEntityModal';
 import { ProjectTree } from '@/features/ProjectTree';
+import { useCreateGroupMutation } from '@/entities/group';
 import { useGetProjectBySlugQuery } from '@/entities/project';
 
 import styles from './styles.module.css';
@@ -15,7 +16,8 @@ import styles from './styles.module.css';
 export const ProjectPage: FC = () => {
     const router = useRouter();
     const projectId = router.query.projectId as string;
-    const { data, error } = useGetProjectBySlugQuery(projectId);
+    const { data, error, refetch } = useGetProjectBySlugQuery(projectId);
+    const [createGroup] = useCreateGroupMutation();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleOpenModal = () => {
@@ -26,8 +28,20 @@ export const ProjectPage: FC = () => {
         setIsModalOpen(false);
     };
 
-    const handleAddGroup = (name: string, slug: string, description?: string) => {
-        console.log('Adding new group:', { name, slug, description, projectId });
+    const handleAddGroup = (name: string, slug: string) => {
+        createGroup({
+            projectSlug: projectId,
+            groupSlug: slug,
+            name,
+        })
+            .unwrap()
+            .then(() => {
+                refetch().catch(err => console.error('Failed to refetch project:', err));
+                handleCloseModal();
+            })
+            .catch((error) => {
+                console.error('Failed to create group:', error);
+            });
     };
 
     return (
@@ -40,17 +54,23 @@ export const ProjectPage: FC = () => {
                 <Card variant='outlined'>
                     {error && (
                         <Alert severity='error'>
-                            {(() => {
-                                if (error && 'data' in error && error.data && typeof error.data === 'object' && 'message' in error.data) {
-                                    return String(error.data.message);
-                                }
-                                return 'Some error occurred';
-                            })()}
+                            {
+                                // @ts-expect-error - error handling for RTK Query error
+                                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                                (error?.data?.message as string) ||
+                                    'Some error occurred'
+                            }
                         </Alert>
                     )}
                     {data && (
                         <Box className={styles['ProjectPage-header']}>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                }}
+                            >
                                 <Typography
                                     variant='h5'
                                     component='h1'
@@ -59,8 +79,8 @@ export const ProjectPage: FC = () => {
                                     {data.name}
                                 </Typography>
                                 <Button
-                                    variant="contained"
-                                    color="primary"
+                                    variant='contained'
+                                    color='primary'
                                     startIcon={<AddIcon />}
                                     onClick={handleOpenModal}
                                 >
@@ -88,5 +108,5 @@ export const ProjectPage: FC = () => {
                 title='Добавить новую группу'
             />
         </PageLayout>
-    )
-}
+    );
+};
