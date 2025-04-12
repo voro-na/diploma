@@ -1,6 +1,8 @@
-import { forwardRef, Ref } from 'react';
+import { forwardRef, Ref, useState } from 'react';
 
-import { Box } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Box, IconButton } from '@mui/material';
 import {
     TreeItem2Checkbox,
     TreeItem2Content,
@@ -13,17 +15,52 @@ import { TreeItem2Icon } from '@mui/x-tree-view/TreeItem2Icon';
 import { TreeItem2Provider } from '@mui/x-tree-view/TreeItem2Provider';
 import {
     useTreeItem2,
-    UseTreeItem2Parameters,
 } from '@mui/x-tree-view/useTreeItem2';
 
-import { ExtendedTreeItemProps } from '../helpers';
+import { AddGroupModal } from '@/features/NewEntityModal';
+import { useCreateFeatureMutation } from '@/entities/feature/api';
+import { useRemoveGroupMutation } from '@/entities/group/api';
+import { useGetProjectBySlugQuery } from '@/entities/project';
+
+import { CustomTreeItemProps, ExtendedTreeItemProps } from '../types';
+
+import { DeleteEntityModal } from './DeleteEntityModal';
+
 
 export const TreeItem = forwardRef(function CustomTreeItem(
-    props: UseTreeItem2Parameters,
+    props: CustomTreeItemProps,
     ref: Ref<HTMLLIElement>
 ) {
-    const { id, itemId, label, disabled, children, ...other } = props;
+    const { id, itemId, label, disabled, children, projectSlug, ...other } = props;
 
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [addFeatureModalOpen, setAddFeatureModalOpen] = useState(false);
+    const [removeGroup] = useRemoveGroupMutation();
+    const [createFeature] = useCreateFeatureMutation();
+    const { refetch } = useGetProjectBySlugQuery(projectSlug);
+    
+    const handleDeleteGroup = async (item: ExtendedTreeItemProps) => {
+        try {
+            await removeGroup({
+                projectSlug: projectSlug,
+                groupSlug: item.groupSlug,
+            });
+            await refetch();
+        } catch (error) {}
+    };
+
+    const handleCreateFeature = async (name: string, slug: string) => {
+        try {
+            await createFeature({
+                projectSlug,
+                groupSlug: item.groupSlug,
+                featureSlug: slug,
+                name
+            });
+            await refetch();
+        } catch (error) {}
+    };
+    
     const {
         getRootProps,
         getContentProps,
@@ -35,7 +72,7 @@ export const TreeItem = forwardRef(function CustomTreeItem(
         status,
         publicAPI,
     } = useTreeItem2({ id, itemId, children, label, disabled, rootRef: ref });
-
+    
     const item = publicAPI.getItem(itemId) as ExtendedTreeItemProps;
 
     return (
@@ -49,7 +86,30 @@ export const TreeItem = forwardRef(function CustomTreeItem(
                         <TreeItem2Checkbox {...getCheckboxProps()} />
                         <TreeItem2Label {...getLabelProps()} />
                         {item.allTestCount &&
-                            `${item.passTestCount} / ${item.allTestCount}`}
+                            `${item.passTestCount} / ${item.allTestCount}`}
+                        
+                        <Box sx={{ ml: 'auto', display: 'flex' }}>
+                            {!item.featureSlug && (
+                                <IconButton 
+                                    size="small" 
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setAddFeatureModalOpen(true);
+                                    }}
+                                >
+                                    <AddIcon fontSize="small" />
+                                </IconButton>
+                            )}
+                            <IconButton 
+                                size="small" 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setDeleteModalOpen(true);
+                                }}
+                            >
+                                <DeleteIcon fontSize="small" />
+                            </IconButton>
+                        </Box>
                     </Box>
 
                     <TreeItem2DragAndDropOverlay
@@ -60,6 +120,20 @@ export const TreeItem = forwardRef(function CustomTreeItem(
                     <TreeItem2GroupTransition {...getGroupTransitionProps()} />
                 )}
             </TreeItem2Root>
+            
+            <DeleteEntityModal
+                open={deleteModalOpen}
+                onClose={() => setDeleteModalOpen(false)}
+                onConfirm={() =>  void handleDeleteGroup(item)}
+                entityName={label as string}
+            />
+            
+            <AddGroupModal
+                open={addFeatureModalOpen}
+                onClose={() => setAddFeatureModalOpen(false)}
+                onSubmit={(name, slug) => void handleCreateFeature(name, slug)}
+                title="Добавить новую фичу"
+            />
         </TreeItem2Provider>
     );
 });

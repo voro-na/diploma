@@ -5,6 +5,7 @@ import { ParsedUrlQuery } from 'querystring';
 
 import { Skeleton } from '@mui/material';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
+import { UseTreeItem2Parameters } from '@mui/x-tree-view/useTreeItem2';
 
 import { useGetProjectBySlugQuery } from '@/entities/project/api';
 import { DotIcon } from '@/shared/ui/icons';
@@ -15,8 +16,8 @@ import { TreeItem } from './CustomTreeItem';
 
 export const ProjectTree: FC = () => {
     const router = useRouter();
-    const projectId = router.query.projectId as string;
-    const { data, isLoading } = useGetProjectBySlugQuery(projectId);
+    const projectSlug = router.query.projectId as string;
+    const { data, isLoading } = useGetProjectBySlugQuery(projectSlug);
 
     const updatePath = (query: ParsedUrlQuery) => {
         const joinedQuery = { ...router.query, ...query };
@@ -53,9 +54,10 @@ export const ProjectTree: FC = () => {
                 <RichTreeView
                     items={mapDataToTreeItems(data) || []}
                     onItemClick={(_, id) => onItemClick(id)}
+                    
                     slots={{
                         endIcon: DotIcon,
-                        item: TreeItem,
+                        item: (props: UseTreeItem2Parameters) => <TreeItem {...props} projectSlug={projectSlug} />,
                     }}
                 />
             )}
