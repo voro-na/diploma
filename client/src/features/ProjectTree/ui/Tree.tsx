@@ -29,23 +29,23 @@ export const ProjectTree: FC = () => {
     };
 
     const onItemClick = (id: string) => {
-        const slugs = data?.groups.reduce((acc: {featureSlug?: string; groupSlug?: string}, group) => {
+        const slugs = data?.groups.reduce((acc: { featureSlug?: string; groupSlug?: string}, group)=> {
             const feature = group.features?.find((feature) => feature._id === id)
+
             if (feature) {
                 acc = {
                     featureSlug: feature.slug,
                     groupSlug: group.slug,
                 };
             }
-            return acc;
+            return acc
         }, {});
     
         if (!slugs?.featureSlug || !slugs.groupSlug) {
             return;
         }
-    
         updatePath({
-            feature: slugs.featureSlug || '',
+            feature: slugs?.featureSlug || '',
             group: slugs.groupSlug || '',
         });
     };

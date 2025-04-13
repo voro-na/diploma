@@ -140,21 +140,6 @@ export class ProjectsController {
     return this.groupService.removeGroup(projectSlug, groupSlug);
   }
 
-  // @Post(':projectSlug/groups/:groupSlug/features/:featureSlug')
-  // async addTests(
-  //   @Param('projectSlug') projectSlug: string,
-  //   @Param('groupSlug') groupSlug: string,
-  //   @Param('featureSlug') featureSlug: string,
-  //   @Body() createTestsDto: CreateTestGroupDto[],
-  // ) {
-  //   return this.projectsService.addTests(
-  //     projectSlug,
-  //     groupSlug,
-  //     featureSlug,
-  //     createTestsDto,
-  //   );
-  // }
-
   // @Post(':projectSlug/upload')
   // async uploadReport(
   //   @Param('projectSlug') projectSlug: string,
