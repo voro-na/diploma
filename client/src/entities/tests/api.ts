@@ -122,5 +122,7 @@ export const testsApi = createApi({
 export const {
     useCreateTestGroupQuery,
     useRemoveTestGroupQuery,
-useRemoveTestMutation, useAddTestMutation, useEditTestMutation
+    useRemoveTestMutation,
+    useAddTestMutation,
+    useEditTestMutation,
 } = testsApi;

@@ -2,17 +2,18 @@ import { FC, useState } from 'react';
 import { useRouter } from 'next/router';
 
 import { Box, Card, Stack, Typography } from '@mui/material';
-import { 
-    DataGrid, 
-    GridRowsProp, 
-    GridRowModesModel, 
-    GridRowModes, 
-    GridActionsCellItem, 
-    GridEventListener, 
-    GridRowId, 
-    GridRowModel, 
+import {
+    DataGrid,
+    GridRowsProp,
+    GridRowModesModel,
+    GridRowModes,
+    GridActionsCellItem,
+    GridEventListener,
+    GridRowId,
+    GridRowModel,
     GridRowEditStopReasons,
-    GridPreProcessEditCellProps
+    GridPreProcessEditCellProps,
+    GridValidRowModel,
 } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
@@ -22,7 +23,10 @@ import CancelIcon from '@mui/icons-material/Close';
 import { PieChartWithCenterLabel } from '@/features/PieChart';
 import { ITestGroup, useGetTestsDetailsQuery } from '@/entities/project';
 import { Status } from '@/entities/project';
-import { useAddTestMutation } from '@/entities/tests/api';
+import {
+    useAddTestMutation,
+    useRemoveTestMutation,
+} from '@/entities/tests/api';
 
 import styles from './styles.module.css';
 import { renderStatus } from './Status';
@@ -46,29 +50,34 @@ export const TestsGroup: FC = () => {
         groupSlug,
         featureSlug,
     });
+    const [removeTest] = useRemoveTestMutation();
     const [addTest] = useAddTestMutation();
 
     const getRowsData = (tests: ITestGroup[]) => {
-        return tests?.reduce((acc: ITestRowData[], testGroup) => {
-            acc.push({
-                status: undefined,
-                test: testGroup.name,
-                id: testGroup._id,
-            });
-
-            testGroup.tests.forEach((test) => {
+        return (
+            tests?.reduce((acc: ITestRowData[], testGroup) => {
                 acc.push({
-                    status: test.status,
-                    test: test.name,
-                    id: test.name + testGroup._id,
+                    status: undefined,
+                    test: testGroup.name,
+                    id: testGroup._id,
                 });
-            });
 
-            return acc;
-        }, []) || [];
+                testGroup.tests.forEach((test) => {
+                    acc.push({
+                        status: test.status,
+                        test: test.name,
+                        id: test.name + testGroup._id,
+                    });
+                });
+
+                return acc;
+            }, []) || []
+        );
     };
 
-    const [rows, setRows] = useState<GridRowsProp>(featureData ? getRowsData(featureData.tests) : []);
+    const [rows, setRows] = useState<GridRowsProp>(
+        featureData ? getRowsData(featureData.tests) : []
+    );
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
 
     if (!featureData) {
@@ -78,32 +87,61 @@ export const TestsGroup: FC = () => {
     const { info, tests } = featureData;
 
     // Update rows when featureData changes
-    if (JSON.stringify(getRowsData(tests)) !== JSON.stringify(rows.filter(row => !row.isNew))) {
-        setRows(prevRows => {
+    if (
+        JSON.stringify(getRowsData(tests)) !==
+        JSON.stringify(rows.filter((row) => !row.isNew))
+    ) {
+        setRows((prevRows) => {
             const newRows = getRowsData(tests);
             // Keep any new rows that were added locally
-            const localNewRows = prevRows.filter(row => row.isNew);
+            const localNewRows = prevRows.filter((row) => row.isNew);
             return [...newRows, ...localNewRows];
         });
     }
 
-    const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
+    const handleRowEditStop: GridEventListener<'rowEditStop'> = (
+        params,
+        event
+    ) => {
         if (params.reason === GridRowEditStopReasons.rowFocusOut) {
             event.defaultMuiPrevented = true;
         }
     };
 
     const handleEditClick = (id: GridRowId) => () => {
-        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+        setRowModesModel({
+            ...rowModesModel,
+            [id]: { mode: GridRowModes.Edit },
+        });
     };
 
-
-    const handleSaveClick = (id: GridRowId) => async () => {
-        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+    const handleSaveClick = (id: GridRowId) => () => {
+        setRowModesModel({
+            ...rowModesModel,
+            [id]: { mode: GridRowModes.View },
+        });
     };
 
-    const handleDeleteClick = (id: GridRowId) => () => {
-        setRows(rows.filter((row) => row.id !== id));
+    const handleDeleteClick = (row: GridValidRowModel) => async () => {
+        const groupId = featureData.tests.reduce((acc, testGroup) => {
+            if (testGroup.tests.find((test) => test.name === row.test)) {
+                return testGroup._id;
+            }
+            return acc;
+        }, '');
+
+        try {
+            await removeTest({
+                projectSlug: projectId,
+                groupSlug,
+                featureSlug,
+                testGroupId: groupId,
+                removeTestData: {
+                    testName: row.test,
+                },
+            });
+            await refetch();
+        } catch (error) {}
     };
 
     const handleCancelClick = (id: GridRowId) => () => {
@@ -125,34 +163,30 @@ export const TestsGroup: FC = () => {
     const processRowUpdate = async (newRow: GridRowModel) => {
         const updatedRow = { ...newRow, isNew: false };
         setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-        
-            // Find the first test group to add the test to
-            const testGroup = tests.find(group => group.tests.length > 0);
-            console.log(newRow, testGroup)
-            
-            if (testGroup) {
-                try {
-                    await addTest({
-                        projectSlug: projectId,
-                        groupSlug,
-                        featureSlug,
-                        testGroupId: testGroup._id,
-                        testData: {
-                            name: newRow.test,
-                            status: Status.FAIL
-                        }
-                    });
-                    await refetch();
-                    
-                    // Remove the row from local state since it will be fetched from the API
-                    setRows(rows.filter((row) => row.id !== newRow.id));
-                } catch (error) {
-                    console.error('Failed to add test:', error);
-                }
+
+        //TODO
+        const testGroup = tests.find((group) => group.tests.length > 0);
+
+        if (testGroup) {
+            try {
+                await addTest({
+                    projectSlug: projectId,
+                    groupSlug,
+                    featureSlug,
+                    testGroupId: testGroup._id,
+                    testData: {
+                        name: newRow.test,
+                        status: Status.FAIL,
+                    },
+                });
+                await refetch();
+            } catch (error) {
+                console.error('Failed to add test:', error);
             }
+        }
 
         return updatedRow;
-      };
+    };
 
     return (
         <Card variant='outlined'>
@@ -218,12 +252,17 @@ export const TestsGroup: FC = () => {
                                 return value;
                             },
                             editable: true,
-                            preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
-                                const hasError = params.props.value.trim() === '';
-                                return { 
-                                    ...params.props, 
+                            preProcessEditCellProps: (
+                                params: GridPreProcessEditCellProps
+                            ) => {
+                                const hasError =
+                                    params.props.value.trim() === '';
+                                return {
+                                    ...params.props,
                                     error: hasError,
-                                    helperText: hasError ? 'Название теста не может быть пустым' : '',
+                                    helperText: hasError
+                                        ? 'Название теста не может быть пустым'
+                                        : '',
                                 };
                             },
                         },
@@ -251,14 +290,16 @@ export const TestsGroup: FC = () => {
                                 if (!row.status) {
                                     return [];
                                 }
-                                
-                                const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+
+                                const isInEditMode =
+                                    rowModesModel[id]?.mode ===
+                                    GridRowModes.Edit;
 
                                 if (isInEditMode) {
                                     return [
                                         <GridActionsCellItem
                                             icon={<SaveIcon />}
-                                            label="Save"
+                                            label='Save'
                                             sx={{
                                                 color: 'primary.main',
                                             }}
@@ -266,10 +307,10 @@ export const TestsGroup: FC = () => {
                                         />,
                                         <GridActionsCellItem
                                             icon={<CancelIcon />}
-                                            label="Cancel"
-                                            className="textPrimary"
+                                            label='Cancel'
+                                            className='textPrimary'
                                             onClick={handleCancelClick(id)}
-                                            color="inherit"
+                                            color='inherit'
                                         />,
                                     ];
                                 }
@@ -277,26 +318,26 @@ export const TestsGroup: FC = () => {
                                 return [
                                     <GridActionsCellItem
                                         icon={<EditIcon />}
-                                        label="Edit"
-                                        className="textPrimary"
+                                        label='Edit'
+                                        className='textPrimary'
                                         onClick={handleEditClick(id)}
-                                        color="inherit"
+                                        color='inherit'
                                     />,
                                     <GridActionsCellItem
                                         icon={<DeleteIcon />}
-                                        label="Delete"
-                                        onClick={handleDeleteClick(id)}
-                                        color="inherit"
+                                        label='Delete'
+                                        onClick={handleDeleteClick(row)}
+                                        color='inherit'
                                     />,
                                 ];
                             },
                         },
                     ]}
-                    editMode="row"
+                    editMode='row'
                     rowModesModel={rowModesModel}
                     onRowModesModelChange={handleRowModesModelChange}
-                    processRowUpdate={processRowUpdate}
                     onRowEditStop={handleRowEditStop}
+                    processRowUpdate={processRowUpdate}
                     slots={{
                         toolbar: EditToolbar,
                     }}

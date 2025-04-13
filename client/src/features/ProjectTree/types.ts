@@ -1,4 +1,4 @@
-import { UseTreeItem2Parameters } from "@mui/x-tree-view/useTreeItem2";
+import { UseTreeItem2Parameters } from '@mui/x-tree-view/useTreeItem2';
 
 export interface DeleteEntityModalProps {
     open: boolean;

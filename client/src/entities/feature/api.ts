@@ -42,4 +42,5 @@ export const featureApi = createApi({
     }),
 });
 
-export const { useCreateFeatureMutation, useRemoveFeatureMutation } = featureApi;
+export const { useCreateFeatureMutation, useRemoveFeatureMutation } =
+    featureApi;
