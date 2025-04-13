@@ -1,7 +1,13 @@
-.group{
+.group {
     background-color: var(--mui-palette-background-default);
 }
 
-.header{
+.header {
     background-color: var(--mui-palette-info-light);
+}
+
+.infoContainer {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    margin-bottom: 10px;
 }

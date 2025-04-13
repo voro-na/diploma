@@ -15,8 +15,8 @@ import styles from './styles.module.css';
 
 export const ProjectPage: FC = () => {
     const router = useRouter();
-    const projectId = router.query.projectId as string;
-    const { data, error, refetch } = useGetProjectBySlugQuery(projectId);
+    const projectSlug = router.query.projectId as string;
+    const { data, error, refetch } = useGetProjectBySlugQuery(projectSlug);
     const [createGroup] = useCreateGroupMutation();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -30,7 +30,7 @@ export const ProjectPage: FC = () => {
 
     const handleAddGroup = (name: string, slug: string) => {
         createGroup({
-            projectSlug: projectId,
+            projectSlug: projectSlug,
             groupSlug: slug,
             name,
         })

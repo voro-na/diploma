@@ -1,7 +1,7 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
-import { Box, Card, Stack, Typography } from '@mui/material';
+import { Box, Card } from '@mui/material';
 import {
     DataGrid,
     GridRowsProp,
@@ -20,8 +20,7 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
 
-import { PieChartWithCenterLabel } from '@/features/PieChart';
-import { ITestGroup, useGetTestsDetailsQuery } from '@/entities/project';
+import { useGetTestsDetailsQuery } from '@/entities/project';
 import { Status } from '@/entities/project';
 import {
     useAddTestMutation,
@@ -29,15 +28,10 @@ import {
 } from '@/entities/tests/api';
 
 import styles from './styles.module.css';
-import { renderStatus } from './Status';
-import { EditToolbar } from './EditToolbar';
-
-interface ITestRowData {
-    status?: Status;
-    test: string;
-    id: string;
-    isNew?: boolean;
-}
+import { renderStatus } from './components/Status';
+import { EditToolbar } from './components/EditToolbar';
+import { getRowsData } from './helpers';
+import { TestsTableHeader } from './components/TestsTableHeader';
 
 export const TestsGroup: FC = () => {
     const router = useRouter();
@@ -53,51 +47,17 @@ export const TestsGroup: FC = () => {
     const [removeTest] = useRemoveTestMutation();
     const [addTest] = useAddTestMutation();
 
-    const getRowsData = (tests: ITestGroup[]) => {
-        return (
-            tests?.reduce((acc: ITestRowData[], testGroup) => {
-                acc.push({
-                    status: undefined,
-                    test: testGroup.name,
-                    id: testGroup._id,
-                });
-
-                testGroup.tests.forEach((test) => {
-                    acc.push({
-                        status: test.status,
-                        test: test.name,
-                        id: test.name + testGroup._id,
-                    });
-                });
-
-                return acc;
-            }, []) || []
-        );
-    };
-
-    const [rows, setRows] = useState<GridRowsProp>(
-        featureData ? getRowsData(featureData.tests) : []
-    );
+    const [rows, setRows] = useState<GridRowsProp>([]);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+
+    useEffect(() => {
+        setRows(featureData ? getRowsData(featureData?.tests) : []);
+    }, [featureData]);
 
     if (!featureData) {
         return null;
     }
-
     const { info, tests } = featureData;
-
-    // Update rows when featureData changes
-    if (
-        JSON.stringify(getRowsData(tests)) !==
-        JSON.stringify(rows.filter((row) => !row.isNew))
-    ) {
-        setRows((prevRows) => {
-            const newRows = getRowsData(tests);
-            // Keep any new rows that were added locally
-            const localNewRows = prevRows.filter((row) => row.isNew);
-            return [...newRows, ...localNewRows];
-        });
-    }
 
     const handleRowEditStop: GridEventListener<'rowEditStop'> = (
         params,
@@ -162,7 +122,6 @@ export const TestsGroup: FC = () => {
 
     const processRowUpdate = async (newRow: GridRowModel) => {
         const updatedRow = { ...newRow, isNew: false };
-        setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
 
         //TODO
         const testGroup = tests.find((group) => group.tests.length > 0);
@@ -180,9 +139,7 @@ export const TestsGroup: FC = () => {
                     },
                 });
                 await refetch();
-            } catch (error) {
-                console.error('Failed to add test:', error);
-            }
+            } catch (error) {}
         }
 
         return updatedRow;
@@ -190,36 +147,7 @@ export const TestsGroup: FC = () => {
 
     return (
         <Card variant='outlined'>
-            <div
-                style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1fr auto',
-                    marginBottom: '10px',
-                }}
-            >
-                <Stack direction='column' justifyContent='center'>
-                    <Typography
-                        component='h1'
-                        variant='subtitle1'
-                        sx={{ fontWeight: 'bold' }}
-                    >
-                        {info.name}
-                    </Typography>
-                    <Typography
-                        component='h2'
-                        variant='subtitle2'
-                        sx={{ marginBottom: 2 }}
-                        gutterBottom
-                        color='textSecondary'
-                    >
-                        {info.description}
-                    </Typography>
-                </Stack>
-                <PieChartWithCenterLabel
-                    allTests={info.allTestCount}
-                    passTests={info.passTestCount}
-                />
-            </div>
+            <TestsTableHeader info={info} />
 
             <Box sx={{ width: '100%' }}>
                 <DataGrid

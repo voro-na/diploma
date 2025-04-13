@@ -9,7 +9,6 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import { Status } from '@/entities/project';
 
-// Generate a unique ID for new rows
 export const generateUniqueId = () => {
     return 'new-test-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
 };
