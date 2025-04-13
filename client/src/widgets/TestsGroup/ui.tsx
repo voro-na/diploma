@@ -29,9 +29,9 @@ import {
 
 import styles from './styles.module.css';
 import { renderStatus } from './components/Status';
-import { EditToolbar } from './components/EditToolbar';
-import { getRowsData } from './helpers';
+import { getRowsData, generateUniqueId } from './helpers';
 import { TestsTableHeader } from './components/TestsTableHeader';
+import { AddTestButton } from './components/AddTestButton';
 
 export const TestsGroup: FC = () => {
     const router = useRouter();
@@ -216,7 +216,12 @@ export const TestsGroup: FC = () => {
                             cellClassName: 'actions',
                             getActions: ({ id, row }) => {
                                 if (!row.status) {
-                                    return [];
+                                    return [
+                                        <AddTestButton
+                                            setRows={setRows}
+                                            setRowModesModel={setRowModesModel}
+                                        />,
+                                    ];
                                 }
 
                                 const isInEditMode =
@@ -266,12 +271,6 @@ export const TestsGroup: FC = () => {
                     onRowModesModelChange={handleRowModesModelChange}
                     onRowEditStop={handleRowEditStop}
                     processRowUpdate={processRowUpdate}
-                    slots={{
-                        toolbar: EditToolbar,
-                    }}
-                    slotProps={{
-                        toolbar: { setRows, setRowModesModel },
-                    }}
                 />
             </Box>
         </Card>

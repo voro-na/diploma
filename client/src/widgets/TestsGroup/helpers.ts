@@ -7,6 +7,12 @@ export interface ITestRowData {
     isNew?: boolean;
 }
 
+export const generateUniqueId = () => {
+    return (
+        'new-test-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9)
+    );
+};
+
 export const getRowsData = (tests: ITestGroup[]) => {
     return (
         tests?.reduce((acc: ITestRowData[], testGroup) => {
