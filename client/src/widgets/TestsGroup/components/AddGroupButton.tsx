@@ -1,7 +1,6 @@
 import { FC } from 'react';
-import { GridActionsCellItem } from '@mui/x-data-grid';
+import { Box, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { Status } from '@/entities/project';
 import {
     GridRowModesModel,
     GridRowModes,
@@ -9,30 +8,26 @@ import {
 } from '@mui/x-data-grid';
 import { generateUniqueId } from '../helpers';
 
-interface AddTestButtonProps {
+interface AddGroupButtonProps {
     setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
     setRowModesModel: (
         newModel: (oldModel: GridRowModesModel) => GridRowModesModel
     ) => void;
-    groupId: string;
 }
 
-export const AddTestButton: FC<AddTestButtonProps> = ({
+export const AddGroupButton: FC<AddGroupButtonProps> = ({
     setRows,
     setRowModesModel,
-    groupId,
 }) => {
-    const handleAddTest = () => {
+    const handleAddGroup = () => {
         const newId = generateUniqueId();
         setRows((oldRows) => [
-            ...oldRows,
             {
                 id: newId,
                 test: '',
-                status: Status.FAIL,
                 isNew: true,
-                groupId,
             },
+            ...oldRows,
         ]);
         setRowModesModel((oldModel) => ({
             ...oldModel,
@@ -44,11 +39,15 @@ export const AddTestButton: FC<AddTestButtonProps> = ({
     };
 
     return (
-        <GridActionsCellItem
-            icon={<AddIcon />}
-            label='Add Test'
-            onClick={handleAddTest}
-            color='primary'
-        />
+        <Box sx={{ p: 1, display: 'flex', justifyContent: 'flex-start' }}>
+            <Button
+                startIcon={<AddIcon />}
+                onClick={handleAddGroup}
+                variant="text"
+                size="small"
+            >
+                Добавить группу
+            </Button>
+        </Box>
     );
 };

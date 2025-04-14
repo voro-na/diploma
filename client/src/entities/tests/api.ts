@@ -12,7 +12,7 @@ export const testsApi = createApi({
         baseUrl: BASE_URL,
     }),
     endpoints: (builder) => ({
-        createTestGroup: builder.query<
+        createTestGroup: builder.mutation<
             ITestGroup,
             {
                 projectSlug: string;
@@ -33,7 +33,7 @@ export const testsApi = createApi({
             }),
         }),
 
-        removeTestGroup: builder.query<
+        removeTestGroup: builder.mutation<
             void,
             {
                 projectSlug: string;
@@ -120,8 +120,8 @@ export const testsApi = createApi({
 });
 
 export const {
-    useCreateTestGroupQuery,
-    useRemoveTestGroupQuery,
+    useCreateTestGroupMutation,
+    useRemoveTestGroupMutation,
     useRemoveTestMutation,
     useAddTestMutation,
     useEditTestMutation,

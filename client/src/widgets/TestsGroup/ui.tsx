@@ -25,6 +25,8 @@ import { Status } from '@/entities/project';
 import {
     useAddTestMutation,
     useRemoveTestMutation,
+    useCreateTestGroupMutation,
+    useRemoveTestGroupMutation,
 } from '@/entities/tests/api';
 
 import styles from './styles.module.css';
@@ -32,6 +34,7 @@ import { renderStatus } from './components/Status';
 import { getRowsData, generateUniqueId } from './helpers';
 import { TestsTableHeader } from './components/TestsTableHeader';
 import { AddTestButton } from './components/AddTestButton';
+import { AddGroupButton } from './components/AddGroupButton';
 
 export const TestsGroup: FC = () => {
     const router = useRouter();
@@ -46,6 +49,8 @@ export const TestsGroup: FC = () => {
     });
     const [removeTest] = useRemoveTestMutation();
     const [addTest] = useAddTestMutation();
+    const [createTestGroup] = useCreateTestGroupMutation();
+    const [removeTestGroup] = useRemoveTestGroupMutation();
 
     const [rows, setRows] = useState<GridRowsProp>([]);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
@@ -83,25 +88,46 @@ export const TestsGroup: FC = () => {
     };
 
     const handleDeleteClick = (row: GridValidRowModel) => async () => {
-        const groupId = featureData.tests.reduce((acc, testGroup) => {
-            if (testGroup.tests.find((test) => test.name === row.test)) {
-                return testGroup._id;
+        if (!row.status) {
+            // Deleting a group
+            const groupId = featureData.tests.find(
+                (group) => group.name === row.test
+            )?._id;
+            if (groupId) {
+                try {
+                    await removeTestGroup({
+                        projectSlug: projectId,
+                        groupSlug,
+                        featureSlug,
+                        testGroupId: groupId,
+                    });
+                    await refetch();
+                } catch (error) {
+                    console.error('Failed to delete group:', error);
+                }
             }
-            return acc;
-        }, '');
+        } else {
+            // Deleting a test
+            const groupId = featureData.tests.reduce((acc, testGroup) => {
+                if (testGroup.tests.find((test) => test.name === row.test)) {
+                    return testGroup._id;
+                }
+                return acc;
+            }, '');
 
-        try {
-            await removeTest({
-                projectSlug: projectId,
-                groupSlug,
-                featureSlug,
-                testGroupId: groupId,
-                removeTestData: {
-                    testName: row.test,
-                },
-            });
-            await refetch();
-        } catch (error) {}
+            try {
+                await removeTest({
+                    projectSlug: projectId,
+                    groupSlug,
+                    featureSlug,
+                    testGroupId: groupId,
+                    removeTestData: {
+                        testName: row.test,
+                    },
+                });
+                await refetch();
+            } catch (error) {}
+        }
     };
 
     const handleCancelClick = (id: GridRowId) => () => {
@@ -123,24 +149,32 @@ export const TestsGroup: FC = () => {
     const processRowUpdate = async (newRow: GridRowModel) => {
         const updatedRow = { ...newRow, isNew: false };
 
-        //TODO
-        const testGroup = tests.find((group) => group.tests.length > 0);
-
-        if (testGroup) {
-            try {
+        try {
+            if (!newRow.status) {
+                // Creating a new group
+                await createTestGroup({
+                    projectSlug: projectId,
+                    groupSlug,
+                    featureSlug,
+                    testGroupData: {
+                        name: newRow.test,
+                        tests: [],
+                    },
+                });
+            } else {
                 await addTest({
                     projectSlug: projectId,
                     groupSlug,
                     featureSlug,
-                    testGroupId: testGroup._id,
+                    testGroupId: newRow.groupId,
                     testData: {
                         name: newRow.test,
                         status: Status.FAIL,
                     },
                 });
-                await refetch();
-            } catch (error) {}
-        }
+            }
+            await refetch();
+        } catch (error) {}
 
         return updatedRow;
     };
@@ -151,6 +185,14 @@ export const TestsGroup: FC = () => {
 
             <Box sx={{ width: '100%' }}>
                 <DataGrid
+                    slots={{
+                        toolbar: () => (
+                            <AddGroupButton
+                                setRows={setRows}
+                                setRowModesModel={setRowModesModel}
+                            />
+                        ),
+                    }}
                     hideFooter
                     getRowClassName={(params) =>
                         !params.row.status ? styles['group'] : ''
@@ -218,8 +260,17 @@ export const TestsGroup: FC = () => {
                                 if (!row.status) {
                                     return [
                                         <AddTestButton
+                                            key='add'
                                             setRows={setRows}
                                             setRowModesModel={setRowModesModel}
+                                            groupId={row.id}
+                                        />,
+                                        <GridActionsCellItem
+                                            key='delete'
+                                            icon={<DeleteIcon />}
+                                            label='Delete'
+                                            onClick={handleDeleteClick(row)}
+                                            color='inherit'
                                         />,
                                     ];
                                 }
