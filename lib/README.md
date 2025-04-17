@@ -159,13 +159,6 @@ Where:
 - `groupSlug` is derived from the first element of the test's ancestorTitles array
 - `featureSlug` is derived from the second element of the test's ancestorTitles array (or 'default' if not present)
 
-##### fetchConfigFromApi
-
-```typescript
-async fetchConfigFromApi(apiUrl: string): Promise<TestConfig>
-```
-
-Fetches test configuration from an API endpoint. (Placeholder for future implementation)
 
 ## CLI Options
 

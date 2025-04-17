@@ -3,14 +3,23 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Status, Test, TestGroup } from '../schemas/tests.schema';
 import { Feature } from '../schemas/feature.schema';
+import { Group } from '../schemas/group.schema';
 import { ProjectHelpers } from '../helpers/project.helpers';
 import { CreateTestDto, CreateTestGroupDto } from '../dto/tests.dto';
+
+interface ParserTest {
+    featureName: string;
+    testGroupName: string;
+    testName: string;
+    status: string;
+}
 
 @Injectable()
 export class TestsService {
     constructor(
         @InjectModel(TestGroup.name) private testsModel: Model<TestGroup>,
         @InjectModel(Feature.name) private featureModel: Model<Feature>,
+        @InjectModel(Group.name) private groupModel: Model<Group>,
         private projectHelpers: ProjectHelpers,
     ) { }
 
@@ -292,5 +301,78 @@ export class TestsService {
         }
 
         return testGroup;
+    }
+
+    /**
+     * Updates tests based on parser results
+     * @param projectSlug The slug of the project
+     * @param tests Array of test results from the parser
+     */
+    async updateTestsFromParser(
+        projectSlug: string,
+        tests: ParserTest[],
+    ): Promise<void> {
+        await this.projectHelpers.checkProjectExists(projectSlug);
+        
+        for (const test of tests) {
+            try {
+                const feature = await this.featureModel.findOne({
+                    name: test.featureName,
+                });
+
+                if (!feature) {
+                    console.warn(`Feature "${test.featureName}" not found in project "${projectSlug}"`);
+                    continue;
+                }
+
+                const group = await this.groupModel.findById(feature.group);
+                if (!group) {
+                    console.warn(`Group not found for feature "${test.featureName}"`);
+                    continue;
+                }
+
+                const testGroups = await this.testsModel.find({
+                    _id: { $in: feature.testGroup }
+                });
+
+                const testGroup = testGroups.find(group => group.name === test.testGroupName);
+                if (!testGroup) {
+                    console.warn(`Test group "${test.testGroupName}" not found in feature "${test.featureName}"`);
+                    continue;
+                }
+
+                const testData: CreateTestDto = {
+                    name: test.testName,
+                    status: test.status.toUpperCase() as Status
+                };
+
+                const existingTest = testGroup.tests.find(t => t.name === test.testName);
+
+                try {
+                    if (existingTest) {
+                        await this.editTest(
+                            projectSlug,
+                            group.slug,
+                            feature.slug,
+                            testGroup._id.toString(),
+                            test.testName,
+                            testData
+                        );
+                    } else {
+                        await this.addTest(
+                            projectSlug,
+                            group.slug,
+                            feature.slug,
+                            testGroup._id.toString(),
+                            testData
+                        );
+                    }
+                } catch (error) {
+                    console.error(`Error updating/adding test "${test.testName}":`, error);
+                }
+            } catch (error) {
+                console.error(`Error updating test "${test.testName}":`, error);
+            }
+        }
     }
 }

@@ -1,5 +1,15 @@
 import * as fs from 'fs';
-import { JestTestResult, TestConfig, TestResultWithConfig } from './types';
+import { JestTestResult } from './types';
+
+/**
+ * Interface for parsed test results
+ */
+export interface Test {
+  featureName: string;
+  testGroupName: string;
+  testName: string;
+  status: string;
+}
 
 /**
  * Parses Jest test results from a file
@@ -17,100 +27,83 @@ export function parseJestResults(filePath: string): JestTestResult {
 }
 
 /**
- * Loads test configuration from a file
- * @param filePath Path to the test configuration JSON file
- * @returns Parsed test configuration
- */
-export function loadTestConfig(filePath: string): TestConfig {
-  try {
-    const content = fs.readFileSync(filePath, 'utf-8');
-    return JSON.parse(content) as TestConfig;
-  } catch (error) {
-    console.error(`Error loading test config from ${filePath}:`, error);
-    throw new Error(`Failed to load test config: ${(error as Error).message}`);
-  }
-}
-
-/**
- * Matches Jest test results with test configuration
+ * Parses Jest test results into a simplified format
  * @param jestResults Jest test results
- * @param config Test configuration
- * @returns Array of test results with configuration information
+ * @returns Array of parsed test results
  */
-export function matchTestsWithConfig(
-  jestResults: JestTestResult,
-  config: TestConfig
-): TestResultWithConfig[] {
-  // Create a map of test names to test results
-  const testMap = new Map<string, { status: 'passed' | 'failed' }>();
+export function parseTestResults(jestResults: JestTestResult): Test[] {
+  const tests: Test[] = [];
 
-  // Process all test results
   jestResults.testResults.forEach((fileResult) => {
-    fileResult.testResults.forEach((testResult) => {
-      // Create a full test name including ancestor titles
-      const fullName = [...testResult.ancestorTitles, testResult.title].join(' ');
-      testMap.set(fullName, { status: testResult.status });
+    fileResult.assertionResults.forEach((testResult) => {
+      const featureName = testResult.ancestorTitles[0];
+      const testGroupName = testResult.ancestorTitles[1];
+
+      if (!featureName || !testGroupName) {
+        console.warn(`Warning: Test "${testResult.title}" has missing feature name or test group name. Feature: ${featureName || 'missing'}, Group: ${testGroupName || 'missing'}`);
+        return; 
+      }
+
+      tests.push({
+        featureName,
+        testGroupName,
+        testName: testResult.title,
+        status: testResult.status
+      });
     });
   });
 
-  // Match tests from config with results
-  return config.tests.map((testConfig) => {
-    const testResult = testMap.get(testConfig.name);
-
-    return {
-      id: testConfig.id,
-      name: testConfig.name,
-      status: testResult ? testResult.status : 'not found',
-      description: testConfig.description || '',
-      groupSlug: config.groupSlug || '',
-      featureSlug: config.featureSlug || ''
-    };
-  });
+  return tests;
 }
 
 /**
  * Prints test results to the console
- * @param results Test results with configuration information
+ * @param results Parsed test results
  */
-export function printResults(results: TestResultWithConfig[]): void {
-  console.log('\n=== Jest Coverage Checker Results ===\n');
+export function printResults(results: Test[]): void {
+  console.log('\n=== Test Results ===\n');
 
-  results.forEach((result) => {
-    const statusColor =
-      result.status === 'passed' ? '\x1b[32m' :  // Green
-        result.status === 'failed' ? '\x1b[31m' :  // Red
-          '\x1b[33m';                                // Yellow for 'not found'
+  const groupedTests = new Map<string, Map<string, Test[]>>();
 
-    const resetColor = '\x1b[0m';
-
-    const existsInResults = result.status !== 'not found';
-    const existsText = existsInResults ? 'Found in test results' : 'Not found in test results';
-    const existsColor = existsInResults ? '\x1b[36m' : '\x1b[33m';
-
-    console.log(`${result.name}:`);
-    console.log(`  ${existsColor}${existsText}${resetColor}`);
-
-    if (existsInResults) {
-      console.log(`  Status: ${statusColor}${result.status}${resetColor}`);
+  results.forEach((test) => {
+    if (!groupedTests.has(test.featureName)) {
+      groupedTests.set(test.featureName, new Map<string, Test[]>());
     }
-
-    if (result.description) {
-      console.log(`  Description: ${result.description}`);
+    const featureMap = groupedTests.get(test.featureName)!;
+    
+    if (!featureMap.has(test.testGroupName)) {
+      featureMap.set(test.testGroupName, []);
     }
-
-    console.log('');
+    featureMap.get(test.testGroupName)!.push(test);
   });
+
+  for (const [featureName, featureMap] of groupedTests) {
+    console.log(`Feature: ${featureName}`);
+    
+    for (const [groupName, tests] of featureMap) {
+      console.log(`  Group: ${groupName}`);
+      
+      tests.forEach((test) => {
+        const statusColor = 
+          test.status === 'passed' ? '\x1b[32m' :  // Green
+          test.status === 'failed' ? '\x1b[31m' :  // Red
+          '\x1b[33m';                              // Yellow for other statuses
+        const resetColor = '\x1b[0m';
+        
+        console.log(`    ${test.testName}: ${statusColor}${test.status}${resetColor}`);
+      });
+      console.log('');
+    }
+    console.log('');
+  }
 
   const passed = results.filter(r => r.status === 'passed').length;
   const failed = results.filter(r => r.status === 'failed').length;
-  const notFound = results.filter(r => r.status === 'not found').length;
-  const found = passed + failed;
+  const total = results.length;
 
   console.log('Summary:');
-  console.log(`  Total tests in config: ${results.length}`);
-  console.log(`  Found in test results: ${found}`);
-  console.log(`  Not found in test results: ${notFound}`);
+  console.log(`  Total tests: ${total}`);
   console.log(`  Passed: ${passed}`);
   console.log(`  Failed: ${failed}`);
-  console.log('\n===================================\n');
+  console.log('\n================\n');
 }

@@ -12,7 +12,6 @@ export class CreateTestGroupDto {
   readonly tests: CreateTestDto[];
 }
 
-
 export class CreateReportDto {
   readonly featureSlug: string;
   readonly groupSlug: string;
@@ -31,4 +30,26 @@ export class EditTestDto {
   testName: string;
   
   readonly newData: CreateTestDto;
+}
+
+export class ParserTestDto {
+  @IsString()
+  @IsNotEmpty()
+  featureName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  testGroupName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  testName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  status: string;
+}
+
+export class UpdateTestsFromParserDto {
+  readonly tests: ParserTestDto[];
 }

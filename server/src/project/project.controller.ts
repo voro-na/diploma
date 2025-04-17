@@ -13,7 +13,7 @@ import { FeatureService } from './services/feature.service';
 import { TestsService } from './services/tests.service';
 import { Project } from './schemas/project.schema';
 import { CreateProjectDto } from './dto/project.dto';
-import { CreateTestDto, CreateTestGroupDto, EditTestDto, RemoveTestDto } from './dto/tests.dto';
+import { CreateTestDto, CreateTestGroupDto, EditTestDto, RemoveTestDto, UpdateTestsFromParserDto } from './dto/tests.dto';
 
 @Controller('projects')
 export class ProjectsController {
@@ -140,18 +140,11 @@ export class ProjectsController {
     return this.groupService.removeGroup(projectSlug, groupSlug);
   }
 
-  // @Post(':projectSlug/upload')
-  // async uploadReport(
-  //   @Param('projectSlug') projectSlug: string,
-  //   @Body() body: CreateReportDto[],
-  // ) {
-  //   for (const report of body) {
-  //     await this.projectsService.addTests(
-  //       projectSlug,
-  //       report.groupSlug,
-  //       report.featureSlug,
-  //       report.report,
-  //     );
-  //   }
-  // }
+  @Post(':projectSlug/tests/update')
+  async updateTestsFromParser(
+    @Param('projectSlug') projectSlug: string,
+    @Body() updateDto: UpdateTestsFromParserDto,
+  ): Promise<void> {
+    return this.testsService.updateTestsFromParser(projectSlug, updateDto.tests);
+  }
 }

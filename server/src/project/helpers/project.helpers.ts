@@ -71,4 +71,16 @@ export class ProjectHelpers {
 
         return feature;
     }
-} 
+
+    /**
+     * Gets all groups in a project
+     * @param projectId The ID of the project
+     * @returns Array of groups in the project
+     */
+    async getAllProjectGroups(projectId: string) {
+        const groups = await this.groupModel.find({
+            project: projectId
+        });
+        return groups;
+    }
+}
