@@ -6,6 +6,12 @@
     background-color: var(--mui-palette-info-light);
 }
 
+.status {
+    display: flex;
+    justify-content: flex-end !important;
+    align-items: center !important;
+}
+
 .infoContainer {
     display: grid;
     grid-template-columns: 1fr auto;

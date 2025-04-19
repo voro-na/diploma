@@ -60,7 +60,7 @@ async function run() {
     });
 
     // Parse the test results
-    const results: Test[] = await parser.parse();
+    const results: Test[] = await parser.parse({apiUrl: 'http://localhost:3001', projectSlug: 'test'});
 
     // Exit with appropriate code based on test results
     const hasFailedTests = results.some((r: Test) => r.status === 'failed');

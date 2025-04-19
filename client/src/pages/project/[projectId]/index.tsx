@@ -1,8 +1,9 @@
 import { GetServerSideProps } from 'next';
 
+import { projectApi } from '@/entities/project/api';
+
 import { wrapper } from '@/app/store';
 import { ProjectPage } from '@/components.pages/ProjectPage';
-import { projectApi } from '@/entities/project/api';
 
 export default ProjectPage;
 

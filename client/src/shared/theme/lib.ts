@@ -5,6 +5,7 @@ import {
     inputsCustomizations,
     surfacesCustomizations,
 } from '../customization';
+import { dataDisplayCustomizations } from '../customization/dataDisplay';
 
 export const theme = createTheme({
     cssVariables: {
@@ -14,5 +15,6 @@ export const theme = createTheme({
     components: {
         ...inputsCustomizations,
         ...surfacesCustomizations,
+        ...dataDisplayCustomizations,
     },
 });

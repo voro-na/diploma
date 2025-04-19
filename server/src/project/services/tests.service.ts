@@ -14,6 +14,12 @@ interface ParserTest {
     status: string;
 }
 
+export interface TestProcessingResult {
+    testName: string;
+    status: 'success' | 'error';
+    error?: string;
+}
+
 @Injectable()
 export class TestsService {
     constructor(
@@ -36,7 +42,7 @@ export class TestsService {
         groupSlug: string,
         featureSlug: string,
         testGroupData: CreateTestGroupDto,
-    ): Promise<TestGroup> {
+    ) {
         const feature = await this.projectHelpers.checkFeatureExists(projectSlug, groupSlug, featureSlug);
 
         const testGroup = new this.testsModel({
@@ -311,23 +317,34 @@ export class TestsService {
     async updateTestsFromParser(
         projectSlug: string,
         tests: ParserTest[],
-    ): Promise<void> {
+    ): Promise<TestProcessingResult[]> {
+        const results: TestProcessingResult[] = [];
+        
         await this.projectHelpers.checkProjectExists(projectSlug);
         
         for (const test of tests) {
             try {
+                const result: TestProcessingResult = {
+                    testName: test.testName,
+                    status: 'success'
+                };
+
                 const feature = await this.featureModel.findOne({
                     name: test.featureName,
                 });
 
                 if (!feature) {
-                    console.warn(`Feature "${test.featureName}" not found in project "${projectSlug}"`);
+                    result.status = 'error';
+                    result.error = `Feature "${test.featureName}" not found in project "${projectSlug}"`;
+                    results.push(result);
                     continue;
                 }
 
                 const group = await this.groupModel.findById(feature.group);
                 if (!group) {
-                    console.warn(`Group not found for feature "${test.featureName}"`);
+                    result.status = 'error';
+                    result.error = `Group not found for feature "${test.featureName}"`;
+                    results.push(result);
                     continue;
                 }
 
@@ -335,10 +352,20 @@ export class TestsService {
                     _id: { $in: feature.testGroup }
                 });
 
-                const testGroup = testGroups.find(group => group.name === test.testGroupName);
+                let testGroup = testGroups.find(group => group.name === test.testGroupName);
                 if (!testGroup) {
-                    console.warn(`Test group "${test.testGroupName}" not found in feature "${test.featureName}"`);
-                    continue;
+                    const testGroupData: CreateTestGroupDto = {
+                        name: test.testGroupName,
+                        tests: []
+                    };
+                    const createdGroup = await this.createTestGroup(
+                        projectSlug,
+                        group.slug,
+                        feature.slug,
+                        testGroupData
+                    );
+
+                    testGroup = await this.testsModel.findById(createdGroup._id);
                 }
 
                 const testData: CreateTestDto = {
@@ -367,12 +394,22 @@ export class TestsService {
                             testData
                         );
                     }
+                    results.push(result);
                 } catch (error) {
-                    console.error(`Error updating/adding test "${test.testName}":`, error);
+                    result.status = 'error';
+                    result.error = `Error updating/adding test: ${error.message}`;
+                    results.push(result);
                 }
             } catch (error) {
-                console.error(`Error updating test "${test.testName}":`, error);
+                const result: TestProcessingResult = {
+                    testName: test.testName,
+                    status: 'error',
+                    error: `Error processing test: ${error.message}`
+                };
+                results.push(result);
             }
         }
+        
+        return results;
     }
 }

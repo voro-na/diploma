@@ -1,0 +1,709 @@
+{
+    "numFailedTestSuites": 0,
+    "numFailedTests": 0,
+    "numPassedTestSuites": 15,
+    "numPassedTests": 145,
+    "numPendingTestSuites": 0,
+    "numPendingTests": 0,
+    "numRuntimeErrorTestSuites": 0,
+    "numTodoTests": 0,
+    "numTotalTestSuites": 15,
+    "numTotalTests": 145,
+    "openHandles": [],
+    "snapshot": {
+      "added": 0,
+      "didUpdate": false,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0
+    },
+    "startTime": 1740482180396,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "Отправленные решения",
+              "Общее состояние"
+            ],
+            "duration": 151,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Отправленные решения Общее состояние Отображается текст \"У вас ещё нет отправленных решений\", если отправленных решений нет",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Отображается текст \"У вас ещё нет отправленных решений\", если отправленных решений нет"
+          },
+          {
+            "ancestorTitles": [
+              "Отправленные решения",
+              "Общее состояние"
+            ],
+            "duration": 58,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Отправленные решения Общее состояние В таблице отображается информация о времени отправки посылки",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "В таблице отображается информация о времени отправки посылки"
+          },
+          {
+            "ancestorTitles": [
+              "Отправленные решения",
+              "Общее состояние"
+            ],
+            "duration": 32,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Отправленные решения Общее состояние В таблице отображается информация о вердикте посылки",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "В таблице отображается информация о вердикте посылки"
+          },
+          {
+            "ancestorTitles": [
+              "Отправленные решения",
+              "Общее состояние"
+            ],
+            "duration": 51,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Отправленные решения Общее состояние В таблице отображается информация о баллах посылки",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "В таблице отображается информация о баллах посылки"
+          },
+          {
+            "ancestorTitles": [
+              "Отправленные решения",
+              "Общее состояние"
+            ],
+            "duration": 97,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Отправленные решения Общее состояние Отображается иконка перехода в детали посылки",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Отображается иконка перехода в детали посылки"
+          },
+          {
+            "ancestorTitles": [
+              "Отправленные решения",
+              "Общее состояние"
+            ],
+            "duration": 124,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Отправленные решения Общее состояние Клик по выбранной строке в таблице с посылками позволяет открывает ее детали",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Клик по выбранной строке в таблице с посылками позволяет открывает ее детали"
+          }
+        ],
+        "endTime": 1740482190690,
+        "message": "",
+        "name": "/Users/voropaevaanad/arcadia/hrtech/frontend/services/odo/src/client/screens/mainPage/tests/Submissions.test.tsx",
+        "startTime": 1740482180887,
+        "status": "passed",
+        "summary": ""
+      },
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Общее состояние"
+            ],
+            "duration": 101,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Общее состояние Отображается id посылки",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Отображается id посылки"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Общее состояние"
+            ],
+            "duration": 89,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Общее состояние При клике на кнопку \"Все решения\" происходит переход к отправленным решениям",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 3,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "При клике на кнопку \"Все решения\" происходит переход к отправленным решениям"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Общее состояние"
+            ],
+            "duration": 17,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Общее состояние Отображается время и дата отправки",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Отображается время и дата отправки"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Общее состояние"
+            ],
+            "duration": 19,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Общее состояние Отображается вердикт",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Отображается вердикт"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Общее состояние"
+            ],
+            "duration": 25,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Общее состояние Отображается компилятор",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Отображается компилятор"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Общее состояние"
+            ],
+            "duration": 26,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Общее состояние Отображаются набранный и максимально возможный балл",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Отображаются набранный и максимально возможный балл"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Общее состояние"
+            ],
+            "duration": 13,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Общее состояние Отображается ошибка, если не удалось загрузить детали посылки",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Отображается ошибка, если не удалось загрузить детали посылки"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Общее состояние"
+            ],
+            "duration": 21,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Общее состояние Отображаются нотификация о недоступности деталей для старых посылок",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Отображаются нотификация о недоступности деталей для старых посылок"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Лог компиляции"
+            ],
+            "duration": 20,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Лог компиляции Блок \"Лог компиляции\" отображается при наличии данных по компиляции",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Блок \"Лог компиляции\" отображается при наличии данных по компиляции"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Лог компиляции"
+            ],
+            "duration": 17,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Лог компиляции Блок \"Лог компиляции\" не отображается при отсутствии данных по компиляции",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Блок \"Лог компиляции\" не отображается при отсутствии данных по компиляции"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Лог компиляции"
+            ],
+            "duration": 18,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Лог компиляции Если не получается отобразить лог компиляции (бинарник или слишком большой файл), показываем ссылку на скачивание и размер исходного файла",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 2,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Если не получается отобразить лог компиляции (бинарник или слишком большой файл), показываем ссылку на скачивание и размер исходного файла"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Исходный код"
+            ],
+            "duration": 81,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Исходный код Блок \"Исходный код\" отображается при наличии данных по исходному коду",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Блок \"Исходный код\" отображается при наличии данных по исходному коду"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Исходный код"
+            ],
+            "duration": 16,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Исходный код Блок \"Исходный код\" не отображается при отсутствии данных по исходному коду",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Блок \"Исходный код\" не отображается при отсутствии данных по исходному коду"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Исходный код"
+            ],
+            "duration": 40,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Исходный код Если просмотр исходного кода запрещен, показывается сообщение об этом",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Если просмотр исходного кода запрещен, показывается сообщение об этом"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Исходный код"
+            ],
+            "duration": 44,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Исходный код Если не получается отобразить исходный код (бинарник или слишком большой файл), показываем ссылку на скачивание и размер исходного файла",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 2,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Если не получается отобразить исходный код (бинарник или слишком большой файл), показываем ссылку на скачивание и размер исходного файла"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Отличия от предыдущего решения"
+            ],
+            "duration": 58,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Отличия от предыдущего решения Блок отображается при наличии данных о разнице между текущим и предыдущем решением",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Блок отображается при наличии данных о разнице между текущим и предыдущем решением"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Отличия от предыдущего решения"
+            ],
+            "duration": 37,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Отличия от предыдущего решения Блок не отображается при отсутствие данных о разнице между текущим и предыдущем решением",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Блок не отображается при отсутствие данных о разнице между текущим и предыдущем решением"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Отличия от предыдущего решения"
+            ],
+            "duration": 35,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Отличия от предыдущего решения Блок не отображается, если просмотр исходного кода запрещен",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Блок не отображается, если просмотр исходного кода запрещен"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Отличия от предыдущего решения"
+            ],
+            "duration": 37,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Отличия от предыдущего решения Если не получается отобразить отличия от предыдущего решения (бинарник или слишком большой файл), показываем ссылку на скачивание и размер файла",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Если не получается отобразить отличия от предыдущего решения (бинарник или слишком большой файл), показываем ссылку на скачивание и размер файла"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Тесты"
+            ],
+            "duration": 14,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Тесты Блок \"Тесты\" отображается при наличии данных по тестам",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Блок \"Тесты\" отображается при наличии данных по тестам"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Тесты"
+            ],
+            "duration": 11,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Тесты Блок \"Тесты\" не отображается при отсутствии данных по тестам",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Блок \"Тесты\" не отображается при отсутствии данных по тестам"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Тесты"
+            ],
+            "duration": 17,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Тесты Отображается общее количество тестов и количество пройденных тестов",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Отображается общее количество тестов и количество пройденных тестов"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Тесты"
+            ],
+            "duration": 17,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Тесты Отображается номер теста",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Отображается номер теста"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Тесты"
+            ],
+            "duration": 16,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Тесты Отображается вердикт теста",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Отображается вердикт теста"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Тесты"
+            ],
+            "duration": 17,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Тесты Отображается время теста и общее ограничение по времени",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Отображается время теста и общее ограничение по времени"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Тесты"
+            ],
+            "duration": 13,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Тесты Отображается используемая память теста и общее ограничение по памяти",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Отображается используемая память теста и общее ограничение по памяти"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Тесты"
+            ],
+            "duration": 15,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Тесты Отображаются баллы за тест",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Отображаются баллы за тест"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Тесты"
+            ],
+            "duration": 63,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Тесты Если есть детали теста, при клике на тест они отображаются",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 3,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Если есть детали теста, при клике на тест они отображаются"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Тесты"
+            ],
+            "duration": 35,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Тесты Если нет деталей теста, не показывается кнопка раскрытия деталей",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 3,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Если нет деталей теста, не показывается кнопка раскрытия деталей"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Тесты"
+            ],
+            "duration": 43,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Тесты Отображается ввод теста",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Отображается ввод теста"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Тесты"
+            ],
+            "duration": 43,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Тесты Отображается вывод теста",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Отображается вывод теста"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Тесты"
+            ],
+            "duration": 42,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Тесты Отображается вывод чекера",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Отображается вывод чекера"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Тесты"
+            ],
+            "duration": 40,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Тесты Отображается ответ теста",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Отображается ответ теста"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Тесты"
+            ],
+            "duration": 41,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Тесты Отображается ошибка теста",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Отображается ошибка теста"
+          },
+          {
+            "ancestorTitles": [
+              "Детали посылки",
+              "Тесты"
+            ],
+            "duration": 52,
+            "failureDetails": [],
+            "failureMessages": [],
+            "fullName": "Детали посылки Тесты Отображается ошибка загрузки деталей теста",
+            "invocations": 1,
+            "location": null,
+            "numPassingAsserts": 1,
+            "retryReasons": [],
+            "status": "passed",
+            "title": "Отображается ошибка загрузки деталей теста"
+          }
+        ],
+        "endTime": 1740482192881,
+        "message": "",
+        "name": "/Users/voropaevaanad/arcadia/hrtech/frontend/services/odo/src/client/screens/mainPage/tests/SubmissionDetails.test.tsx",
+        "startTime": 1740482190701,
+        "status": "passed",
+        "summary": ""
+      }
+    ]
+  }

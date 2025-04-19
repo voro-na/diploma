@@ -24,9 +24,9 @@ export interface IFeature {
 }
 
 export const enum Status {
-    PASS = 'passed',
-    FAIL = 'failed',
-    SKIP = 'skipped',
+    PASS = 'PASSED',
+    FAIL = 'FAILED',
+    SKIP = 'SKIPPED',
 }
 
 export interface ITest {

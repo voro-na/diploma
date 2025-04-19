@@ -1,40 +1,41 @@
 import { FC, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
+import CancelIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
 import { Box, Card } from '@mui/material';
 import {
     DataGrid,
-    GridRowsProp,
-    GridRowModesModel,
-    GridRowModes,
     GridActionsCellItem,
     GridEventListener,
+    GridPreProcessEditCellProps,
+    GridRowEditStopReasons,
     GridRowId,
     GridRowModel,
-    GridRowEditStopReasons,
-    GridPreProcessEditCellProps,
+    GridRowModes,
+    GridRowModesModel,
+    GridRowsProp,
     GridValidRowModel,
 } from '@mui/x-data-grid';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Close';
 
 import { useGetTestsDetailsQuery } from '@/entities/project';
 import { Status } from '@/entities/project';
 import {
     useAddTestMutation,
-    useRemoveTestMutation,
     useCreateTestGroupMutation,
     useRemoveTestGroupMutation,
+    useRemoveTestMutation,
 } from '@/entities/tests/api';
 
-import styles from './styles.module.css';
-import { renderStatus } from './components/Status';
-import { getRowsData, generateUniqueId } from './helpers';
-import { TestsTableHeader } from './components/TestsTableHeader';
-import { AddTestButton } from './components/AddTestButton';
 import { AddGroupButton } from './components/AddGroupButton';
+import { AddTestButton } from './components/AddTestButton';
+import { renderStatus } from './components/Status';
+import { TestsTableHeader } from './components/TestsTableHeader';
+import {getRowsData } from './helpers';
+
+import styles from './styles.module.css';
 
 export const TestsGroup: FC = () => {
     const router = useRouter();
@@ -180,7 +181,7 @@ export const TestsGroup: FC = () => {
     };
 
     return (
-        <Card variant='outlined'>
+        <Card variant='outlined' sx={{overflow: 'auto'}}>
             <TestsTableHeader info={info} />
 
             <Box sx={{ width: '100%' }}>
@@ -240,6 +241,8 @@ export const TestsGroup: FC = () => {
                             field: 'status',
                             headerName: 'Статус',
                             headerClassName: styles['header'],
+                            headerAlign: 'right',
+                            cellClassName: styles['status'],
                             sortable: false,
                             filterable: false,
                             hideable: false,
@@ -248,11 +251,13 @@ export const TestsGroup: FC = () => {
                             editable: false,
                             renderCell: (params) =>
                                 renderStatus(params.value as Status),
+
                         },
                         {
                             field: 'actions',
                             type: 'actions',
-                            headerName: 'Actions',
+                            headerName: 'Действия',
+                            headerAlign: 'right',
                             headerClassName: styles['header'],
                             width: 100,
                             cellClassName: 'actions',

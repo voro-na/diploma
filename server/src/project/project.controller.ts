@@ -10,7 +10,7 @@ import {
 import { ProjectService } from './services/project.service';
 import { GroupService } from './services/group.service';
 import { FeatureService } from './services/feature.service';
-import { TestsService } from './services/tests.service';
+import { TestsService, TestProcessingResult } from './services/tests.service';
 import { Project } from './schemas/project.schema';
 import { CreateProjectDto } from './dto/project.dto';
 import { CreateTestDto, CreateTestGroupDto, EditTestDto, RemoveTestDto, UpdateTestsFromParserDto } from './dto/tests.dto';
@@ -144,7 +144,7 @@ export class ProjectsController {
   async updateTestsFromParser(
     @Param('projectSlug') projectSlug: string,
     @Body() updateDto: UpdateTestsFromParserDto,
-  ): Promise<void> {
+  ): Promise<TestProcessingResult[]> {
     return this.testsService.updateTestsFromParser(projectSlug, updateDto.tests);
   }
 }

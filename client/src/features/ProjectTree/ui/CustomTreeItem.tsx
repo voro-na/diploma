@@ -83,7 +83,6 @@ export const TreeItem = forwardRef(function CustomTreeItem(
     } = useTreeItem2({ id, itemId, children, label, disabled, rootRef: ref });
     
     const item = publicAPI.getItem(itemId) as ExtendedTreeItemProps;
-
     return (
         <TreeItem2Provider itemId={itemId}>
             <TreeItem2Root {...getRootProps(other)}>
@@ -91,13 +90,15 @@ export const TreeItem = forwardRef(function CustomTreeItem(
                     <TreeItem2IconContainer {...getIconContainerProps()}>
                         <TreeItem2Icon status={status} />
                     </TreeItem2IconContainer>
-                    <Box sx={{ flexGrow: 1, display: 'flex', gap: 1 }}>
+                    <Box sx={{ flexGrow: 1, display: 'flex', gap: 1, alignItems: 'center' }}>
                         <TreeItem2Checkbox {...getCheckboxProps()} />
                         <TreeItem2Label {...getLabelProps()} />
+                        <div>
                         {item.allTestCount &&
-                            `${item.passTestCount} / ${item.allTestCount}`}
+                            `${item.passTestCount} / ${item.allTestCount}`}
+                        </div>
                         
-                        <Box sx={{ ml: 'auto', display: 'flex' }}>
+                        <Box sx={{ ml: 'auto', display: 'flex', gap: 1 }}>
                             {!item.featureSlug && (
                                 <IconButton 
                                     size="small" 
@@ -106,7 +107,7 @@ export const TreeItem = forwardRef(function CustomTreeItem(
                                         setAddFeatureModalOpen(true);
                                     }}
                                 >
-                                    <AddIcon fontSize="small" />
+                                    <AddIcon />
                                 </IconButton>
                             )}
                             <IconButton 
@@ -116,7 +117,7 @@ export const TreeItem = forwardRef(function CustomTreeItem(
                                     setDeleteModalOpen(true);
                                 }}
                             >
-                                <DeleteIcon fontSize="small" />
+                                <DeleteIcon />
                             </IconButton>
                         </Box>
                     </Box>
