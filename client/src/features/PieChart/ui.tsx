@@ -1,9 +1,11 @@
-import { FC, PropsWithChildren } from 'react';
+import { FC, PropsWithChildren, useMemo } from 'react';
 
+import { orange } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
 import { useDrawingArea } from '@mui/x-charts/hooks';
 import { PieChart } from '@mui/x-charts/PieChart';
 
+import { ITestGroup, Status } from '@/entities/project';
 import { brand, red } from '@/shared/customization';
 
 const size = {
@@ -30,29 +32,46 @@ const PieCenterLabel: FC<PropsWithChildren> = ({ children }) => {
                 {children}
             </StyledText>
             <StyledText x={left + width / 2} y={secondaryY}>
-                покрыто
+                покрытие
             </StyledText>
         </>
     );
 };
 
 export const PieChartWithCenterLabel: FC<{
-    passTests?: number;
-    allTests?: number;
-}> = ({ allTests = 3, passTests = 2 }) => {
-    const percent =
-        allTests !== undefined && passTests !== undefined
-            ? Math.round((passTests / allTests) * 100)
-            : undefined;
+    tests: ITestGroup[];
+}> = ({ tests }) => {
+    const { data, percent } = useMemo(() => {
+        const allTests = tests.flatMap(group => group.tests);
+        const statusCounts = allTests.reduce((acc, test) => {
+            acc[test.status] = (acc[test.status] || 0) + 1;
+            return acc;
+        }, {} as Record<Status, number>);
 
-    const data = [
-        {
-            value: (allTests || 0) - (passTests || 0),
-            label: 'FAIL',
-            color: red[200],
-        },
-        { value: passTests || 0, label: 'PASS', color: brand[200] },
-    ];
+        const totalTests = allTests.length;
+        const passedTests = statusCounts[Status.PASS] || 0;
+
+        return {
+            data: [
+                {
+                    value: statusCounts[Status.PASS] || 0,
+                    label: 'PASSED',
+                    color: brand[200],
+                },
+                {
+                    value: statusCounts[Status.FAIL] || 0,
+                    label: 'FAILED',
+                    color: red[200],
+                },
+                {
+                    value: statusCounts[Status.SKIP] || 0,
+                    label: 'SKIPPED',
+                    color: orange[200],
+                },
+            ],
+            percent: totalTests > 0 ? Math.round((passedTests / totalTests) * 100) : 0,
+        };
+    }, [tests]);
 
     return (
         <PieChart
@@ -68,7 +87,6 @@ export const PieChartWithCenterLabel: FC<{
             ]}
             slotProps={{
                 legend: {
-                    // padding: 50,
                     itemMarkHeight: 10,
                     itemMarkWidth: 10,
                     labelStyle: {

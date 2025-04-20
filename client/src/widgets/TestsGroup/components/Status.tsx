@@ -9,9 +9,9 @@ import styles from './Status.module.css';
 
 export const renderStatus = (status: Status) => {
     const colors: Record<Status, ChipOwnProps['color']> = {
-        [Status.PASS]: 'success',
+        [Status.PASS]: 'info',
         [Status.FAIL]: 'error',
-        [Status.SKIP]: 'default',
+        [Status.SKIP]: 'warning',
     };
 
     const icons = {

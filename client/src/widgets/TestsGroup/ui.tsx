@@ -182,7 +182,7 @@ export const TestsGroup: FC = () => {
 
     return (
         <Card variant='outlined' sx={{overflow: 'auto'}}>
-            <TestsTableHeader info={info} />
+            <TestsTableHeader info={info} tests={tests}/>
 
             <Box sx={{ width: '100%' }}>
                 <DataGrid
@@ -194,6 +194,19 @@ export const TestsGroup: FC = () => {
                             />
                         ),
                     }}
+                    getRowHeight={() => 'auto'}
+                    sx={{
+                        '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': {
+                          py: 1,
+                        },
+                        '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': {
+                          py: '15px',
+                        },
+                        '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': {
+                          py: '22px',
+                        },
+                      }}
+
                     hideFooter
                     getRowClassName={(params) =>
                         !params.row.status ? styles['group'] : ''

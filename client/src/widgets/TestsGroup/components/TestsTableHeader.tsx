@@ -1,14 +1,18 @@
 import { FC } from 'react';
+
 import { Stack, Typography } from '@mui/material';
+
 import { PieChartWithCenterLabel } from '@/features/PieChart';
+import { IFeature, ITestGroup } from '@/entities/project/types';
+
 import styles from '../styles.module.css';
-import { IFeature } from '@/entities/project/types';
 
 interface TestsTableHeaderProps {
     info: IFeature;
+    tests: ITestGroup[];
 }
 
-export const TestsTableHeader: FC<TestsTableHeaderProps> = ({ info }) => {
+export const TestsTableHeader: FC<TestsTableHeaderProps> = ({ info, tests }) => {
     return (
         <div className={styles.infoContainer}>
             <Stack direction='column' justifyContent='center'>
@@ -29,10 +33,7 @@ export const TestsTableHeader: FC<TestsTableHeaderProps> = ({ info }) => {
                     {info.description}
                 </Typography>
             </Stack>
-            <PieChartWithCenterLabel
-                allTests={info.allTestCount}
-                passTests={info.passTestCount}
-            />
+            <PieChartWithCenterLabel tests={tests}/>
         </div>
     );
 };

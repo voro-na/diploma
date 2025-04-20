@@ -43,7 +43,7 @@ export const Header: FC = () => {
                             color: 'var(--mui-palette-info-dark)',
                         }}
                     >
-                        LOGO
+                        DIPLOMA
                     </Typography>
                     <ThemeToggler />
                 </StyledToolbar>
