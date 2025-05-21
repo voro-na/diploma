@@ -1,0 +1,37 @@
+{
+  "testResults": [
+    {
+      "testFilePath": "/tests/math.test.js",
+      "assertionResults": [
+        {
+          "ancestorTitles": ["Math Operations", "Addition"],
+          "title": "should add two numbers correctly",
+          "status": "passed"
+        },
+        {
+          "ancestorTitles": ["Math Operations", "Addition"],
+          "title": "should handle negative numbers",
+          "status": "failed"
+        },
+        {
+          "ancestorTitles": ["Math Operations", "Subtraction"],
+          "title": "should subtract two numbers",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "testFilePath": "/tests/string.test.js",
+      "assertionResults": [
+        {
+          "ancestorTitles": ["String Operations", "Concatenation"],
+          "title": "should join two strings",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "numFailedTests": 1,
+  "numPassedTests": 3,
+  "numTotalTests": 4
+}
