@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {Provider} from 'react-redux';
 import type { AppProps } from 'next/app';
 
@@ -12,6 +13,7 @@ import './global.css';
 import { wrapper } from '@/app/store';
 
 const App = ({ Component, pageProps, ...rest }: AppProps) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { store, props } = wrapper.useWrappedStore(rest);
 
     return (

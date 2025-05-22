@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { FC, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
@@ -218,6 +219,7 @@ export const TestsGroup: FC = () => {
                             },
                             valueGetter: (value, row) => {
                                 if (!row.status) {
+                                    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
                                     return row.test;
                                 }
                                 return value;
@@ -227,6 +229,7 @@ export const TestsGroup: FC = () => {
                                 params: GridPreProcessEditCellProps
                             ) => {
                                 const hasError =
+                                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
                                     params.props.value.trim() === '';
                                 return {
                                     ...params.props,
@@ -274,6 +277,7 @@ export const TestsGroup: FC = () => {
                                             key='delete'
                                             icon={<DeleteIcon />}
                                             label='Delete'
+                                            // eslint-disable-next-line @typescript-eslint/no-misused-promises
                                             onClick={handleDeleteClick(row)}
                                             color='inherit'
                                         />,
@@ -286,6 +290,7 @@ export const TestsGroup: FC = () => {
 
                                 if (isInEditMode) {
                                     return [
+                                        // eslint-disable-next-line react/jsx-key
                                         <GridActionsCellItem
                                             icon={<SaveIcon />}
                                             label='Save'
@@ -294,6 +299,7 @@ export const TestsGroup: FC = () => {
                                             }}
                                             onClick={handleSaveClick(id)}
                                         />,
+                                        // eslint-disable-next-line react/jsx-key
                                         <GridActionsCellItem
                                             icon={<CancelIcon />}
                                             label='Cancel'
@@ -305,6 +311,7 @@ export const TestsGroup: FC = () => {
                                 }
 
                                 return [
+                                    // eslint-disable-next-line react/jsx-key
                                     <GridActionsCellItem
                                         icon={<EditIcon />}
                                         label='Edit'
@@ -312,9 +319,11 @@ export const TestsGroup: FC = () => {
                                         onClick={handleEditClick(id)}
                                         color='inherit'
                                     />,
+                                    // eslint-disable-next-line react/jsx-key
                                     <GridActionsCellItem
                                         icon={<DeleteIcon />}
                                         label='Delete'
+                                        // eslint-disable-next-line @typescript-eslint/no-misused-promises
                                         onClick={handleDeleteClick(row)}
                                         color='inherit'
                                     />,

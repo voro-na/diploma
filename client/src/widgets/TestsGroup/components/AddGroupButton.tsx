@@ -1,11 +1,13 @@
 import { FC } from 'react';
-import { Box, Button } from '@mui/material';
+
 import AddIcon from '@mui/icons-material/Add';
+import { Box, Button } from '@mui/material';
 import {
-    GridRowModesModel,
     GridRowModes,
+    GridRowModesModel,
     GridRowsProp,
 } from '@mui/x-data-grid';
+
 import { generateUniqueId } from '../helpers';
 
 interface AddGroupButtonProps {

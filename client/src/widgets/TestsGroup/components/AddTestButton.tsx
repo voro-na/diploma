@@ -1,12 +1,15 @@
 import { FC } from 'react';
-import { GridActionsCellItem } from '@mui/x-data-grid';
+
 import AddIcon from '@mui/icons-material/Add';
-import { Status } from '@/entities/project';
+import { GridActionsCellItem } from '@mui/x-data-grid';
 import {
-    GridRowModesModel,
     GridRowModes,
+    GridRowModesModel,
     GridRowsProp,
 } from '@mui/x-data-grid';
+
+import { Status } from '@/entities/project';
+
 import { generateUniqueId } from '../helpers';
 
 interface AddTestButtonProps {

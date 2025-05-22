@@ -4,7 +4,11 @@
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking"
     ],
-    "plugins": ["unused-imports", "@typescript-eslint", "simple-import-sort"],
+    "plugins": [
+        "unused-imports",
+        "@typescript-eslint",
+        "simple-import-sort"
+    ],
     "rules": {
         "unused-imports/no-unused-imports": "error",
         "unused-imports/no-unused-vars": [
@@ -20,20 +24,43 @@
             "error",
             {
                 "groups": [
-                    ["^node:"],
-                    ["^\\u0000"],
-                    ["^react", "^@?\\w"],
-                    ["@mui"],
-                    ["@/widgets", "@/features", "@/entities", "@/shared" ],
-                    ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
-                    ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
-                    ["^.+\\.s?css$"]
+                    [
+                        "^node:"
+                    ],
+                    [
+                        "^\\u0000"
+                    ],
+                    [
+                        "^react",
+                        "^@?\\w"
+                    ],
+                    [
+                        "@mui"
+                    ],
+                    [
+                        "@/widgets",
+                        "@/features",
+                        "@/entities",
+                        "@/shared"
+                    ],
+                    [
+                        "^\\.\\.(?!/?$)",
+                        "^\\.\\./?$"
+                    ],
+                    [
+                        "^\\./(?=.*/)(?!/?$)",
+                        "^\\.(?!/?$)",
+                        "^\\./?$"
+                    ],
+                    [
+                        "^.+\\.s?css$"
+                    ]
                 ]
             }
         ]
     },
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "project": "./client/tsconfig.json"
+        "project": "./tsconfig.json"
     }
 }

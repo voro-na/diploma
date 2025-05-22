@@ -1,12 +1,14 @@
-import { Head, Html, Main, NextScript } from 'next/document';
+import { JSX } from 'react';
+import { DocumentContext, Head, Html, Main, NextScript } from 'next/document';
 
 import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
 import {
     documentGetInitialProps,
     DocumentHeadTags,
+    DocumentHeadTagsProps,
 } from '@mui/material-nextjs/v13-pagesRouter';
 
-export default function Document(props) {
+export default function Document(props: JSX.IntrinsicAttributes & DocumentHeadTagsProps) {
     return (
         <Html lang='en'>
             <Head>
@@ -21,7 +23,7 @@ export default function Document(props) {
     );
 }
 
-Document.getInitialProps = async (ctx) => {
+Document.getInitialProps = async (ctx: DocumentContext) => {
     const finalProps = await documentGetInitialProps(ctx);
     return finalProps;
 };
